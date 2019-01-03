@@ -106,42 +106,42 @@
   \tanh(x) = \frac{\exp(x) - \exp(-x)}{\exp(x) + \exp(-x)}\text{．}
 \end{equation}
 
-% \subsection{\lstm{} 更新记忆结构}
-% 介绍完遗忘门和输入门，在这里可以对遗忘门和输入门进行总结，遗忘门计算向量 $\vec{f}_t$ 来选择性的保留记忆，而输入门则是计算向量 $\vec{i}_t$ 来选择性的记忆新的信息．有了这个总结，\lstm{} 的更新记忆结构便很好理解了，\lstm{} 的更新记忆结构如\cref{fig:Cell Update of LSTM} 所示．%
-% %
-% \begin{figure}[!htb]
-%   \centering
-%   \input{./Figures/Cell_Update_of_LSTM}[scale = 0.7]
-%   \caption{\lstm{} 节点更新记忆结构}
-%   \label{fig:Cell Update of LSTM}
-% \end{figure}%
-% %
-% 由\cref{fig:Cell Update of LSTM} 可以看出，\lstm{} 节点在更新记忆的时候采取的策略很直接，就是将遗忘门的输出和输入门的输出结合起来，具体的运算如\cref{eqn:Memory Update of LSTM Node} 所示．%
-% %
-% \begin{equation}\label{eqn:Memory Update of LSTM Node}
-%   \vec{m}_t = \vec{f}_i\cdot\vec{m}_{t-1} + \vec{i}_t\cdot\vec{m}'_t\text{，}
-% \end{equation}
+\subsection{\lstm{} 更新记忆结构}
+介绍完遗忘门和输入门，在这里可以对遗忘门和输入门进行总结，遗忘门计算向量 $\vec{f}_t$ 来选择性的保留记忆，而输入门则是计算向量 $\vec{i}_t$ 来选择性的记忆新的信息．有了这个总结，\lstm{} 的更新记忆结构便很好理解了，\lstm{} 的更新记忆结构如\cref{fig:Cell Update of LSTM} 所示．%
+%
+\begin{figure}[!htb]
+  \centering
+  \scalebox{0.7}{\input{./figures/cell_update_of_lstm}}
+  \caption{\lstm{} 节点更新记忆结构}
+  \label{fig:Cell Update of LSTM}
+\end{figure}%
+%
+由\cref{fig:Cell Update of LSTM} 可以看出，\lstm{} 节点在更新记忆的时候采取的策略很直接，就是将遗忘门的输出和输入门的输出结合起来，具体的运算如\cref{eqn:Memory Update of LSTM Node} 所示．%
+%
+\begin{equation}\label{eqn:Memory Update of LSTM Node}
+  \vec{m}_t = \vec{f}_i\cdot\vec{m}_{t-1} + \vec{i}_t\cdot\vec{m}'_t\text{，}
+\end{equation}
 
-% \subsection{\lstm{} 输门结构}
-% 其实向量 $\vec{m}_t$ 并不是 \lstm{} 节点的输出，向量 $\vec{m}_t$ 的作用只是辅助实现选择性遗忘和选择性记忆的效果．\lstm{} 节点的输出是 $\vec{h}_t$，输出 $\vec{h}_t$ 主要依赖于 $\vec{m}_t$，但是又不仅仅依赖于 $\vec{m}_t$，他需要在 $\vec{m}_t$ 的基础上进行过滤，这个过滤用的向量 $\vec{o}_t$ 是由向量 $\vec{h}_{t-1}$ 以及输入序列中第 $t$ 个元素所对应的特征向量 $\vec{x}_t$ 共同决定的．其更新的结构如\cref{fig:Cell Output of LSTM} 所示．%
-% %
-% \begin{figure}[!htb]
-%   \centering
-%   \input{./Figures/Cell_Output_of_LSTM}[scale = 0.7]
-%   \caption{}
-%   \label{fig:Cell Output of LSTM}
-% \end{figure}%
-% %
-% 由\cref{fig:Cell Output of LSTM} 我们可以得到输出门过滤向量 $\vec{o}_t$ 以及输出结果 $\vec{m}_t$ 的表达式，分别如\cref{eqn:Filter Vector of Output Gate} 和\cref{eqn:Output of Output Gate} 所示．%
-% %
-% \begin{align}
-%   \label{eqn:Filter Vector of Output Gate}
-%   \vec{o}_t &= \sigma\big(\bm{W}_o[\vec{h}_{t-1};\vec{x}_t] + \vec{b}_o\big)\text{，}\\
-%   \label{eqn:Output of Output Gate}
-%   \vec{h}_t &= \vec{o}_t\cdot\tanh(\vec{m}_t)\text{．}
-% \end{align}%
-% %
-% 其中 $\vec{o}_t\in\mathbb{R}^{m\times 1}$ 是输出门过滤向量，$\bm{W}_o\in\mathbb{R}^{m\times (m+n)}$ 是输出门权重矩阵，$\vec{b}_o\in\mathbb{R}^{m\times 1}$ 是输出门偏置向量．
+\subsection{\lstm{} 输出门结构}
+其实向量 $\vec{m}_t$ 并不是 \lstm{} 节点的输出，向量 $\vec{m}_t$ 的作用只是辅助实现选择性遗忘和选择性记忆的效果．\lstm{} 节点的输出是 $\vec{h}_t$，输出 $\vec{h}_t$ 主要依赖于 $\vec{m}_t$，但是又不仅仅依赖于 $\vec{m}_t$，他需要在 $\vec{m}_t$ 的基础上进行过滤，这个过滤用的向量 $\vec{o}_t$ 是由向量 $\vec{h}_{t-1}$ 以及输入序列中第 $t$ 个元素所对应的特征向量 $\vec{x}_t$ 共同决定的．其更新的结构如\cref{fig:Cell Output of LSTM} 所示．%
+%
+\begin{figure}[!htb]
+  \centering
+  \scalebox{0.7}{\input{./figures/cell_output_of_lstm}}
+  \caption{\lstm{} 节点的输出门结构}
+  \label{fig:Cell Output of LSTM}
+\end{figure}%
+%
+由\cref{fig:Cell Output of LSTM} 我们可以得到输出门过滤向量 $\vec{o}_t$ 以及输出结果 $\vec{m}_t$ 的表达式，分别如\cref{eqn:Filter Vector of Output Gate} 和\cref{eqn:Output of Output Gate} 所示．%
+%
+\begin{align}
+  \label{eqn:Filter Vector of Output Gate}
+  \vec{o}_t &= \sigma\big(\bm{W}_o[\vec{h}_{t-1};\vec{x}_t] + \vec{b}_o\big)\text{，}\\
+  \label{eqn:Output of Output Gate}
+  \vec{h}_t &= \vec{o}_t\cdot\tanh(\vec{m}_t)\text{．}
+\end{align}%
+%
+其中 $\vec{o}_t\in\mathbb{R}^{m\times 1}$ 是输出门过滤向量，$\bm{W}_o\in\mathbb{R}^{m\times (m+n)}$ 是输出门权重矩阵，$\vec{b}_o\in\mathbb{R}^{m\times 1}$ 是输出门偏置向量．
 
-% \subsection{小节}
-% \indent\lstm{} 是对传统 RNN 的改进，解决了传统 RNN 无法处理长期依赖预测的问题．\lstm{} 是通过在传统 RNN 中添加遗忘门以及输入门，配合辅助记忆向量 $\vec{m}_t$ 使得 \lstm{} 中的节点保留了对早期输入的记忆．本节介绍的 \lstm{} 节点计算公式中的权重矩阵 $\bm{W}_f$、$\bm{W}_i$、$\bm{W}_m$ 和 $\bm{W}_o$，以及偏置向量 $\vec{b}_f$、$\vec{b}_i$、$\vec{b}_m$ 和 $\vec{b}_o$ 都是 \lstm{} 的训练参数，需要利用大量的样本数据进行训练．
+\subsection{小节}
+\indent\lstm{} 是对传统 RNN 的改进，解决了传统 RNN 无法处理长期依赖预测的问题．\lstm{} 是通过在传统 RNN 中添加遗忘门以及输入门，配合辅助记忆向量 $\vec{m}_t$ 使得 \lstm{} 中的节点保留了对早期输入的记忆．本节介绍的 \lstm{} 节点计算公式中的权重矩阵 $\bm{W}_f$、$\bm{W}_i$、$\bm{W}_m$ 和 $\bm{W}_o$，以及偏置向量 $\vec{b}_f$、$\vec{b}_i$、$\vec{b}_m$ 和 $\vec{b}_o$ 都是 \lstm{} 的训练参数，需要利用大量的样本数据进行训练．

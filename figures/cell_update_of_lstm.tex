@@ -1,0 +1,30 @@
+\begin{tikzpicture}
+  \lstmnode{};
+
+  \coordinate (ht-1) at ([xshift = -1cm]lstm-ht-1);
+  \coordinate (mt-1) at ([xshift = -1cm]lstm-mt-1);
+  \coordinate (ht)   at ([xshift = 1cm]lstm-ht);
+  \coordinate (mt)   at ([xshift = 1cm]lstm-mt);
+  \draw[flow]    (lstm-ht) -- (ht) node[midway, above] {$\vec{h}_{t}$};
+  \draw[flow, -] (lstm-ht-1) -- (ht-1) node[midway, above] {$\vec{h}_{t-1}$};
+  \draw[flow]    (lstm-mt) -- (mt) node[midway, above] {$\vec{m}_{t}$};
+  \draw[flow, -] (lstm-mt-1) -- (mt-1) node[midway, above] {$\vec{m}_{t-1}$};
+  \draw[flow]    (lstm-ht') -- ++(90:0.5cm) node[output, anchor = south] (ht') {$\vec{h}_{t}$};
+  \draw[flow, -] (lstm-xt) -- ++(-90:0.5cm) node[input, anchor = north] (xt) {$\vec{x}_{t}$};
+
+  \node[cover, fit = (xt.south -| ht-1) (ht |- ht'.north)] {};
+  \drawlstmborder{};
+
+  \draw[flow, -] (mt-1) -- (lstm-mt-1) node[midway, above] {$\vec{m}_{t-1}$};
+  \draw[flow] (lstm-sigmoid1) -- (lstm-times1) node[midway, left] {$\vec{f}_t$};
+  \draw[flow] (lstm-sigmoid2) |- (lstm-times2) node[midway, left] {$\vec{i}_t$};
+  \draw[flow] (lstm-tanh1) -- (lstm-times2) node[midway, left] {$\vec{m}'_t$};
+  \draw[flow] (lstm-mt-1) -- (lstm-times1);
+  \draw[flow] (lstm-times1) -- (lstm-plus);
+  \draw[flow, -] (lstm-plus) -- (lstm-mt);
+  \draw[flow] (lstm-mt) -- (mt) node[midway, above] {$\vec{m}_t$};
+  \draw[flow] (lstm-times2) -- (lstm-plus);
+  \node[circle operator] at (lstm-times1) {$\times$};
+  \node[circle operator] at (lstm-times2) {$\times$};
+  \node[circle operator] at (lstm-plus) {$+$};
+\end{tikzpicture}
