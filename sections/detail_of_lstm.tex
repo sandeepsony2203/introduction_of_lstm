@@ -1,0 +1,147 @@
+%!TEX root = ../Main.tex
+
+\newcommand{\inlinesymbol}[2]{%
+  \tikz[baseline = -0.7ex]{\node[#1, scale = 0.7] {#2};}%
+}
+
+\clearpage
+\section{\lstm{} 详细介绍}
+\subsection{\lstm{} 总体结构}
+所有循环神经网络结构都是由完全相同结构的模块进行复制而成的．在普通的RNNs 中，这个模块结构非常简单，比如仅是一个单一的 \inlinesymbol{rectangle operator}{$\tanh$} 层，如\cref{fig:Inner Structure of RNN} 所示．%
+%
+\begin{figure}[!htb]
+  \centering
+  \scalebox{0.7}{\input{./figures/inner_structure_of_rnn}}
+  \caption{RNN 内部结构}
+  \label{fig:Inner Structure of RNN}
+\end{figure}
+
+\lstm{} 也有类似的结构．但是每一个节点不再只是用一个单一的 \inlinesymbol{rectangle operator}{$\tanh$} 层，而是用了四个相互作用的层．\lstm{} 的内部结构\cref{fig:Inner Structure of LSTM} 所示，在 $t$ 时刻处理第 $t$ 个输入 $\vec{x}_t$ 时，需要上一时刻，也就是 $t-1$ 时刻的输出，即 $\vec{m}_{t-1}$ 和 $\vec{h}_{t-1}$．%
+%
+\begin{figure}[!htb]
+  \centering
+  \scalebox{0.7}{\input{./figures/inner_structure_of_lstm}}
+  \caption{\lstm{} 内部结构}
+  \label{fig:Inner Structure of LSTM}
+\end{figure}%
+%
+% \cref{fig:Inner Structure of LSTM} 中的符合的含义如\cref{fig:Legend of Inner Structure of LSTM} 所示．%
+% %
+% \begin{figure}[!htb]
+%   \centering
+%   \input{./Figures/Legend_of_Inner_Structure_of_LSTM}[scale = 0.7]
+%   \caption{\cref{fig:Inner Structure of LSTM} 的符号说明}
+%   \label{fig:Legend of Inner Structure of LSTM}
+% \end{figure}%
+% %
+% 可以看出对于一个 \lstm{} 节点来说，里面含有 $5$ 种类型元素．黑色的节点 \inlinesymbol{circle operator}{$\times$}、\inlinesymbol{circle operator}{$+$} 和 \inlinesymbol{ellipse operator}{$\tanh$} 表示向量逐位运算，假设向量 $\vec{\alpha} = (\alpha_1, \alpha_2, \cdots, \alpha_n)^\top$ 和向量 $\vec{\beta} = (\beta_1, \beta_2, \cdots, \beta_n)^\top$，且 $\vec{\alpha}\in\mathbb{R}^{n\times 1}$，$\vec{\beta}\in\mathbb{R}^{n\times 1}$，则向量 $\vec{\alpha}$ 和 $\vec{\beta}$ 的逐位运算定义如\cref{eqn:Pointwise Multiplication of Two Vectors}、\cref{eqn:Pointwise Addition of Two Vectors} 和\cref{eqn:Pointwise tanh of Vector} 所示．%
+% %
+% \begin{align}
+%   \label{eqn:Pointwise Multiplication of Two Vectors}
+%   \vec{\alpha}\cdot\vec{\beta} &= (\alpha_1\beta_1, \alpha_2\beta_2, \cdots, \alpha_n\beta_n)^\top\text{，}\\
+%   \label{eqn:Pointwise Addition of Two Vectors}
+%   \vec{\alpha}+\vec{\beta} &= (\alpha_1 + \beta_1, \alpha_2 + \beta_2, \cdots, \alpha_n + \beta_n)^\top\text{，}\\
+%   \label{eqn:Pointwise tanh of Vector}
+%   \tanh{\vec{\alpha}} &= (\tanh{\alpha_1}, \tanh{\alpha_2}, \cdots, \tanh{\alpha_n})^\top\text{．}
+% \end{align}%
+% %
+% 蓝色节点 \inlinesymbol{rectangle operator}{$\sigma$} 和 \inlinesymbol{rectangle operator}{$\tanh$} 表示神经网络，其中 $\sigma$ 和 $\tanh$ 表示神经网络中的激活函数，这个会在以后详细说明．传输符号的输入输出的一样的，向量 $\vec{\alpha}$ 经过传输符号不会发生变化．连接符号会将两个向量连接起来，向量 $\vec{\alpha}$ 和 $\vec{\beta}$ 经过连接符号会变成一个向量 $[\vec{\alpha};\vec{\beta}] = (\alpha_1, \alpha_2, \cdots, \alpha_n, \beta_1, \beta_2, \cdots, \beta_n)^\top$，且不需要向量 $\vec{\alpha}$ 和向量 $\vec{\beta}$ 维数一样．而复制节点会将输入的向量变成两个相同的向量，即向量 $\vec{\alpha}$ 经过复制节点会变成两个相同的向量 $\vec{\alpha}$．
+
+% \subsection{\lstm{} 记忆结构}
+% 我们可以看到，对于每个 \lstm{} 节点，其上部都有一个贯穿节点的数据流流向，如\cref{fig:State Transfer of LSTM} 所示，这个结构被称为记忆结构．%
+% %
+% \begin{figure}[!htb]
+%   \centering
+%   \input{./Figures/State_Transfer_of_LSTM}[scale = 0.7]
+%   \caption{\lstm{} 节点的记忆结构}
+%   \label{fig:State Transfer of LSTM}
+% \end{figure}%
+% %
+% 记忆的输入是上一个节点记忆向量 $\vec{m}_{t-1}\in\mathbb{R}^{m\times 1}$，记忆向量 $\vec{m}_{t-1}$ 经过一系列逐位运算会得到该 \lstm{} 节点记忆向量 $\vec{m}_t$．记忆结构使得实现 \lstm{} 节点的记忆保留，而且这种记忆保留是有选择性的，这就使得 \lstm{} 具有记忆的能力，因此，\lstm{} 可以被用来处理与序列相关的问题．
+
+% \subsection{\lstm{} 遗忘门结构}
+% 但是，我们注意到了，记忆向量 $\vec{m}_t$ 是 \lstm{} 节点记忆保留的载体，而且，从头至尾只有逐位运算，其维度是不会发生变化的．这就意味着，固定长度的记忆向量 $\vec{m}_t$ 不可能无限制的对输入进行记忆，因此 \lstm{} 设计了遗忘门这个环节，实现有选择的忘掉某些旧的信息，只有这样，才能有新的信息加入．遗忘门的结构如\cref{fig:Forget Gate of LSTM} 所示．%
+% %
+% \begin{figure}[!htb]
+%   \centering
+%   \input{./Figures/Forget_Gate_of_LSTM}[scale = 0.7]
+%   \caption{\lstm{} 节点的遗忘门结构}
+%   \label{fig:Forget Gate of LSTM}
+% \end{figure}%
+% %
+% 可以看出，遗忘门的输入是向量 $\vec{h}_{t-1}\in\mathbb{R}^{m\times 1}$ 以及输入序列中第 $t$ 个元素所对应的特征向量 $\vec{x}_t\in\mathbb{R}^{n\times 1}$ 连接后的向量 $[\vec{h}_{t-1};\vec{x}_t]\in\mathbb{R}^{(m+n)\times 1}$，其输出是向量 $\vec{f}_t\in\mathbb{R}^{m\times 1}$．遗忘门的输入输出关系如\cref{eqn:Input Output of Forget Gate} 所示．%
+% %
+% \begin{equation}\label{eqn:Input Output of Forget Gate}
+%   \vec{f}_t = \sigma\big(\bm{W}_f[\vec{h}_{t-1};\vec{x}_t] + \vec{b}_f\big)\text{，}
+% \end{equation}%
+% %
+% 其中 $\bm{W}_f\in\mathbb{R}^{m\times (m+n)}$ 是遗忘门的权重矩阵，$\vec{b}_f\in\mathbb{R}^{m\times 1}$ 是遗忘门的偏置向量，$\sigma$ 是 Sigmoid 函数，是遗忘门的激活函数，其表达式如\cref{eqn:Definition of Sigmoid Function} 所示．%
+% %
+% \begin{equation}\label{eqn:Definition of Sigmoid Function}
+%   \sigma(x) = \frac{1}{1+\exp(-x)}\text{．}
+% \end{equation}
+
+% \subsection{\lstm{} 输入门结构}
+% 决定了遗忘什么，就是为了给新的输入腾出记忆空间．通过仔细对比\cref{fig:Inner Structure of RNN} 我们可以看出，\cref{fig:Input Gate of LSTM} 中 \lstm{} 节点中的 $\vec{m}'_t$ 就是传统 RNN 的节点输出 $\vec{h}_t$．只不过，在 \lstm{} 中，这个输入值不能一起送到输出口，\lstm{} 提出的输入门结构可以选择让 $\vec{m}'_t$ 中哪些信息通过，实现有选择的输入．\lstm{} 的输入门结构如\cref{fig:Input Gate of LSTM} 所示．%
+% %
+% \begin{figure}[!htb]
+%   \centering
+%   \input{./Figures/Input_Gate_of_LSTM}[scale = 0.7]
+%   \caption{\lstm{} 节点的输入门结构}
+%   \label{fig:Input Gate of LSTM}
+% \end{figure}%
+% %
+% 可以看出，输入门的输入是向量 $\vec{h}_{t-1}$ 以及输入序列中第 $t$ 个元素所对应的特征向量 $\vec{x}_t$ 连接后的向量 $[\vec{h}_{t-1};\vec{x}_t]$，其输出是向量 $\vec{i}_t\in\mathbb{R}^{m\times 1}$、$\vec{m}'_t\in\mathbb{R}^{m\times 1}$．输入门的输入输出关系如\cref{eqn:Input Output of Input Gate i} 以及\cref{eqn:Input Output of Input Gate C} 所示．%
+% %
+% \begin{align}
+%   \label{eqn:Input Output of Input Gate i}
+%   \vec{i}_t  &= \sigma\big(\bm{W}_i[\vec{h}_{t-1};\vec{x}_t] + \vec{b}_i\big)\text{，}\\
+%   \label{eqn:Input Output of Input Gate C}
+%   \vec{m}'_t &= \tanh\big(\bm{W}_m[\vec{h}_{t-1};\vec{x}_t] + \vec{b}_m\big)\text{．}
+% \end{align}%
+% %
+% 其中 $\bm{W}_i\in\mathbb{R}^{m\times (m+n)}$ 是输入门的权重矩阵，$\vec{b}_i\in\mathbb{R}^{m\times 1}$ 是输入门的偏置向量，$\bm{W}_m\in\mathbb{R}^{m\times (m+n)}$ 是输入权重矩阵，$\vec{b}_m\in\mathbb{R}^{m\times 1}$ 是输入偏置向量，$\tanh$ 是双曲正切函数，其表达式如\cref{eqn:Definition of tanh Function} 所示．%
+% %
+% \begin{equation}\label{eqn:Definition of tanh Function}
+%   \tanh(x) = \frac{\exp(x) - \exp(-x)}{\exp(x) + \exp(-x)}\text{．}
+% \end{equation}
+
+% \subsection{\lstm{} 更新记忆结构}
+% 介绍完遗忘门和输入门，在这里可以对遗忘门和输入门进行总结，遗忘门计算向量 $\vec{f}_t$ 来选择性的保留记忆，而输入门则是计算向量 $\vec{i}_t$ 来选择性的记忆新的信息．有了这个总结，\lstm{} 的更新记忆结构便很好理解了，\lstm{} 的更新记忆结构如\cref{fig:Cell Update of LSTM} 所示．%
+% %
+% \begin{figure}[!htb]
+%   \centering
+%   \input{./Figures/Cell_Update_of_LSTM}[scale = 0.7]
+%   \caption{\lstm{} 节点更新记忆结构}
+%   \label{fig:Cell Update of LSTM}
+% \end{figure}%
+% %
+% 由\cref{fig:Cell Update of LSTM} 可以看出，\lstm{} 节点在更新记忆的时候采取的策略很直接，就是将遗忘门的输出和输入门的输出结合起来，具体的运算如\cref{eqn:Memory Update of LSTM Node} 所示．%
+% %
+% \begin{equation}\label{eqn:Memory Update of LSTM Node}
+%   \vec{m}_t = \vec{f}_i\cdot\vec{m}_{t-1} + \vec{i}_t\cdot\vec{m}'_t\text{，}
+% \end{equation}
+
+% \subsection{\lstm{} 输门结构}
+% 其实向量 $\vec{m}_t$ 并不是 \lstm{} 节点的输出，向量 $\vec{m}_t$ 的作用只是辅助实现选择性遗忘和选择性记忆的效果．\lstm{} 节点的输出是 $\vec{h}_t$，输出 $\vec{h}_t$ 主要依赖于 $\vec{m}_t$，但是又不仅仅依赖于 $\vec{m}_t$，他需要在 $\vec{m}_t$ 的基础上进行过滤，这个过滤用的向量 $\vec{o}_t$ 是由向量 $\vec{h}_{t-1}$ 以及输入序列中第 $t$ 个元素所对应的特征向量 $\vec{x}_t$ 共同决定的．其更新的结构如\cref{fig:Cell Output of LSTM} 所示．%
+% %
+% \begin{figure}[!htb]
+%   \centering
+%   \input{./Figures/Cell_Output_of_LSTM}[scale = 0.7]
+%   \caption{}
+%   \label{fig:Cell Output of LSTM}
+% \end{figure}%
+% %
+% 由\cref{fig:Cell Output of LSTM} 我们可以得到输出门过滤向量 $\vec{o}_t$ 以及输出结果 $\vec{m}_t$ 的表达式，分别如\cref{eqn:Filter Vector of Output Gate} 和\cref{eqn:Output of Output Gate} 所示．%
+% %
+% \begin{align}
+%   \label{eqn:Filter Vector of Output Gate}
+%   \vec{o}_t &= \sigma\big(\bm{W}_o[\vec{h}_{t-1};\vec{x}_t] + \vec{b}_o\big)\text{，}\\
+%   \label{eqn:Output of Output Gate}
+%   \vec{h}_t &= \vec{o}_t\cdot\tanh(\vec{m}_t)\text{．}
+% \end{align}%
+% %
+% 其中 $\vec{o}_t\in\mathbb{R}^{m\times 1}$ 是输出门过滤向量，$\bm{W}_o\in\mathbb{R}^{m\times (m+n)}$ 是输出门权重矩阵，$\vec{b}_o\in\mathbb{R}^{m\times 1}$ 是输出门偏置向量．
+
+% \subsection{小节}
+% \indent\lstm{} 是对传统 RNN 的改进，解决了传统 RNN 无法处理长期依赖预测的问题．\lstm{} 是通过在传统 RNN 中添加遗忘门以及输入门，配合辅助记忆向量 $\vec{m}_t$ 使得 \lstm{} 中的节点保留了对早期输入的记忆．本节介绍的 \lstm{} 节点计算公式中的权重矩阵 $\bm{W}_f$、$\bm{W}_i$、$\bm{W}_m$ 和 $\bm{W}_o$，以及偏置向量 $\vec{b}_f$、$\vec{b}_i$、$\vec{b}_m$ 和 $\vec{b}_o$ 都是 \lstm{} 的训练参数，需要利用大量的样本数据进行训练．

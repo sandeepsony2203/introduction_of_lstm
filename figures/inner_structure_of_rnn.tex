@@ -1,0 +1,23 @@
+\begin{tikzpicture}
+  \rnnnode[position = {(0, 0)}, prefix = rnn1]{};
+  \rnnnode[position = {(5.5, 0)}, prefix = rnn2]{};
+  \rnnnode[position = {(11.0, 0)}, prefix = rnn3]{};
+
+  \node[fit = (rnn1-frame.north west) (rnn1-frame.south east), cover] {};
+  \node[fit = (rnn3-frame.north west) (rnn3-frame.south east), cover] {};
+  \drawrnnborder[prefix = rnn1]{};
+  \drawrnnborder[prefix = rnn3]{};
+
+  \node[scale = 5] at (rnn1-frame.center) {\shadowtext{$A_{t-1}$}};
+  \node[scale = 5] at (rnn3-frame.center) {\shadowtext{$A_{t+1}$}};
+
+  \draw[flow, -] (rnn1-ht-1) -- ++(180:1cm) node[midway, above] {$\vec{h}_{t-2}$};
+  \draw[flow, -] (rnn1-ht) -- (rnn2-ht-1)  node[midway, above] {$\vec{h}_{t-1}$};
+  \draw[flow, -] (rnn2-ht) -- (rnn3-ht-1)  node[midway, above] {$\vec{h}_{t}$};
+  \draw[flow]    (rnn3-ht) -- ++(0:1cm)     node[midway, above] {$\vec{h}_{t+1}$};
+
+  \foreach \h/\x [count = \i] in {t-1/t-1, t/t, t+1/t+1}{%
+    \draw[flow] (rnn\i-ht') -- ++(90:0.5cm) node[output, anchor = south] {$\vec{h}_{\h}$};
+    \draw[flow, -] (rnn\i-xt) -- ++(-90:0.5cm) node[input, anchor = north] {$\vec{x}_{\x}$};
+  }
+\end{tikzpicture}

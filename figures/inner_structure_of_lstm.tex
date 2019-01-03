@@ -1,0 +1,27 @@
+\begin{tikzpicture}
+  \lstmnode[position = {(0, 5)}, prefix = lstm1]{};
+  \lstmnode[position = {(7, 5)}, prefix = lstm2]{};
+  \lstmnode[position = {(14, 5)}, prefix = lstm3]{};
+
+  \node[fit = (lstm1-frame.north west) (lstm1-frame.south east), cover] {};
+  \node[fit = (lstm3-frame.north west) (lstm3-frame.south east), cover] {};
+  \drawlstmborder[prefix = lstm1]{};
+  \drawlstmborder[prefix = lstm3]{};
+
+  \node[scale = 6] at (lstm1-frame.center) {\shadowtext{$A_{t-1}$}};
+  \node[scale = 6] at (lstm3-frame.center) {\shadowtext{$A_{t+1}$}};
+
+  \draw[flow, -] (lstm1-mt-1) -- ++(180:1cm) node[midway, above] {$\vec{m}_{t-2}$};
+  \draw[flow, -] (lstm1-ht-1) -- ++(180:1cm) node[midway, above] {$\vec{h}_{t-2}$};
+  \draw[flow, -] (lstm1-mt) -- (lstm2-mt-1)  node[midway, above] {$\vec{m}_{t-1}$};
+  \draw[flow, -] (lstm1-ht) -- (lstm2-ht-1)  node[midway, above] {$\vec{h}_{t-1}$};
+  \draw[flow, -] (lstm2-mt) -- (lstm3-mt-1)  node[midway, above] {$\vec{m}_{t}$};
+  \draw[flow, -] (lstm2-ht) -- (lstm3-ht-1)  node[midway, above] {$\vec{h}_{t}$};
+  \draw[flow]    (lstm3-mt) -- ++(0:1cm)     node[midway, above] {$\vec{m}_{t+1}$};
+  \draw[flow]    (lstm3-ht) -- ++(0:1cm)     node[midway, above] {$\vec{h}_{t+1}$};
+
+  \foreach \h/\x [count = \i] in {t-1/t-1, t/t, t+1/t+1}{%
+    \draw[flow] (lstm\i-ht') -- ++(90:0.5cm) node[output, anchor = south] {$\vec{h}_{\h}$};
+    \draw[flow, -] (lstm\i-xt) -- ++(-90:0.5cm) node[input, anchor = north] {$\vec{x}_{\x}$};
+  }
+\end{tikzpicture}

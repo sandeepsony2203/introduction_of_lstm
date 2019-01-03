@@ -1,0 +1,24 @@
+\documentclass{./template/article}
+
+\def\ss{\texorpdfstring{\inlinetext{seq2seq}}{seq2seq}}
+\def\lstm{\texorpdfstring{\inlinetext{LSTM}}{LSTM}}
+\def\rnn{\texorpdfstring{\inlinetext{RNN}}{RNN}}
+
+\input{./configurations}
+  
+% 设置标题和作者
+\maintitle{\lstm{} 与 \ss{} 详细解释}
+\authorname{张琦}
+\abstract{
+    本文从 \rnn{} 的概念讲起，进而介绍 \rnn{} 存在的问题，以此引出 \rnn{} 的变种 \lstm{}．本文详细介绍了 \lstm{} 的工作原理以及公式推导．最后，本文介绍了 \lstm{} 的典型应用，即 \ss{} 模型，以及 \ss{} 中的 Attention 机制．
+}
+
+\begin{document}
+\input{./sections/detail_of_lstm}
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{参考文献}
+\bibliographystyle{ieeetr}
+\bibliography{./references}
+\end{document}

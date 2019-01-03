@@ -1,0 +1,318 @@
+%!TEX root = ../main.tex
+
+\definecolor{green}{RGB}{0, 127, 0}
+\definecolor{lightgreen}{RGB}{226, 247, 209}
+\colorlet{lightblue}{blue!10}
+
+\let\oldvec\vec
+\renewcommand{\vec}[1]{\oldvec{\bm{#1}}}
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\def\e{\mathrm{e}}
+\def\dif{\mathrm{d}}
+\def\ustep{1_{\mathbb{R}^+}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\softmax}{softmax}
+\DeclareMathOperator*{\random}{random}
+\allowdisplaybreaks
+  
+\usepackage{tikz, pgfplots}
+  \usetikzlibrary{calc}
+  \usetikzlibrary{fit}
+  \usetikzlibrary{backgrounds}
+  \usetikzlibrary{shapes}
+  \usepgflibrary{arrows.meta}
+  \usepgfplotslibrary{groupplots}
+
+  \tikzset{%
+    inputnode/.style = {circle, draw = blue, minimum size = 0.8cm, align = flush center, inner sep = 0pt},
+    commonnode/.style = {circle, draw = black, minimum size = 0.8cm, align = flush center, inner sep = 0pt},
+    > = Stealth,
+    circle operator/.style = {circle, fill = black, minimum size = 0.4cm, inner sep = 0pt, align = flush center, text = white},
+    rectangle operator/.style = {rectangle, fill = blue!60, minimum height = 0.4cm, rounded corners = 1pt, minimum width = 0.8cm, inner sep = 0pt, align = flush center, text = white, execute at begin node = \vphantom{蛤gl}},
+    ellipse operator/.style = {circle operator, ellipse, minimum height = 0.4cm, minimum width = 0.8cm, execute at begin node = \vphantom{蛤gl}},
+    frame/.style = {rectangle, draw = green, rounded corners = 4pt, fill = lightgreen, inner sep = 0pt},
+    flow/.style = {line width = 1pt, rounded corners = 4pt, -{Stealth[length = 6pt, width = 5pt]}},
+    input/.style = {circle, minimum size = 0.8cm, inner sep = 0pt, draw, line width = 1pt},
+    output/.style = {input},
+    cover/.style = {opacity = 0.9, fill = white, draw = none, inner sep = 0pt},
+  }
+
+  \pgfplotsset{%
+    compat = 1.14,%
+    filter discard warning = false,
+    discard if not/.style 2 args = {
+      x filter/.code = {
+        \edef\tempa{\thisrow{#1}}
+        \edef\tempb{#2}
+        \ifx\tempa\tempb
+        \else
+            \def\pgfmathresult{inf}
+        \fi
+      }
+    },
+    legend cell align = {left},
+    legend style = {nodes = {scale = 0.7, transform shape}},
+    every tick label/.append style = {scale = 0.7},
+    every axis label/.append style = {scale = 0.7},
+    every axis title/.append style = {scale = 0.7},
+    contour/label node code/.code={\node[sloped, scale = 0.7, fill = none] {\shadowtext{\pgfmathprintnumber{#1}}};}
+  }
+
+\usepackage{contour}
+  \contourlength{1pt}
+  \makeatletter
+    \con@outlinetrue
+  \makeatother
+
+  \newcommand{\shadowtext}[2][white]{\contour{#1}{#2}}
+
+\makeatletter
+\def\lstmnode@position{(0, 0)}
+\def\lstmnode@prefix{lstm}
+\def\drawlstmborder@prefix{lstm}
+\define@key{lstmnode}{position}{\renewcommand*{\lstmnode@position}{#1}}
+\define@key{lstmnode}{prefix}{\renewcommand*{\lstmnode@prefix}{#1}}
+\define@key{drawlstmborder}{prefix}{\renewcommand*{\drawlstmborder@prefix}{#1}}
+
+\newcommand{\drawlstmborder}[2][prefix = lstm]{
+  \setkeys{drawlstmborder}{#1}%
+  \draw[rounded corners = 4pt, green]
+    ([yshift = 3pt]\drawlstmborder@prefix-mt-1) |- ([xshift = -3pt]\drawlstmborder@prefix-ht')
+    ([xshift = 3pt]\drawlstmborder@prefix-ht') -| ([yshift = 3pt]\drawlstmborder@prefix-mt)
+    ([yshift = -3pt]\drawlstmborder@prefix-mt) -- ([yshift = 3pt]\drawlstmborder@prefix-ht)
+    ([yshift = -3pt]\drawlstmborder@prefix-ht) |- ([xshift = 3pt]\drawlstmborder@prefix-xt)
+    ([xshift = -3pt]\drawlstmborder@prefix-xt) -| ([yshift = -3pt]\drawlstmborder@prefix-ht-1)
+    ([yshift = 3pt]\drawlstmborder@prefix-ht-1) -- ([yshift = -3pt]\drawlstmborder@prefix-mt-1);
+}
+
+\newcommand{\lstmnode}[1][]{%
+  \setkeys{lstmnode}{#1}%
+
+  \node[circle operator] (\lstmnode@prefix-times1) at \lstmnode@position {$\bm{\times}$};
+  \node[rectangle operator] (\lstmnode@prefix-sigmoid1) at ([yshift = -2.5cm]\lstmnode@prefix-times1)  {$\sigma$};
+  \node[rectangle operator] (\lstmnode@prefix-sigmoid2) at ([xshift = 1cm]\lstmnode@prefix-sigmoid1) {$\sigma$};
+  \node[rectangle operator] (\lstmnode@prefix-tanh1)    at ([xshift = 1cm]\lstmnode@prefix-sigmoid2) {$\tanh$};
+  \node[rectangle operator] (\lstmnode@prefix-sigmoid3) at ([xshift = 1cm]\lstmnode@prefix-tanh1)    {$\sigma$};
+
+  \node[circle operator] (\lstmnode@prefix-plus) at (\lstmnode@prefix-tanh1 |- \lstmnode@prefix-times1) {$\bm{+}$};
+  \node[circle operator] (\lstmnode@prefix-times2) at ($(\lstmnode@prefix-tanh1)!0.5!(\lstmnode@prefix-plus)$) {$\bm{\times}$};
+  \node[circle operator] (\lstmnode@prefix-times3) at ($([xshift = 1cm]\lstmnode@prefix-sigmoid3)!1/3!([xshift = 1cm]\lstmnode@prefix-sigmoid3 |- \lstmnode@prefix-plus)$) {$\bm{\times}$};
+  \node[ellipse operator] (\lstmnode@prefix-tanh2) at ($([xshift = 1cm]\lstmnode@prefix-sigmoid3)!2/3!([xshift = 1cm]\lstmnode@prefix-sigmoid3 |- \lstmnode@prefix-plus)$) {$\tanh$};
+
+  \coordinate (north west) at ([xshift = -0.5cm, yshift = 0.5cm]\lstmnode@prefix-times1.center);
+  \coordinate (south east) at ([xshift = 2cm, yshift = -1cm]\lstmnode@prefix-sigmoid3.center);
+
+  \begin{scope}[on background layer]
+    \node[frame, fit = (north west) (south east), draw = none] (\lstmnode@prefix-frame) {};
+  \end{scope}
+
+  \coordinate (\lstmnode@prefix-mt-1) at (\lstmnode@prefix-times1 -| \lstmnode@prefix-frame.west);
+  \coordinate (\lstmnode@prefix-ht-1) at ([yshift = 0.5cm]\lstmnode@prefix-frame.south west);
+  \coordinate (\lstmnode@prefix-mt)   at (\lstmnode@prefix-times1 -| \lstmnode@prefix-frame.east);
+  \coordinate (\lstmnode@prefix-ht)   at (\lstmnode@prefix-ht-1 -| \lstmnode@prefix-frame.east);
+  \coordinate (\lstmnode@prefix-ht')  at ([xshift = -0.3cm]\lstmnode@prefix-frame.north east);
+  \coordinate (\lstmnode@prefix-xt)   at ([xshift = 0.25cm]\lstmnode@prefix-frame.south west);
+
+
+  \drawlstmborder[prefix = \lstmnode@prefix]{};
+
+  \draw[flow] (\lstmnode@prefix-ht-1) -| (\lstmnode@prefix-sigmoid1);
+  \draw[flow] (\lstmnode@prefix-mt-1) -- (\lstmnode@prefix-times1);
+  \draw[flow] (\lstmnode@prefix-sigmoid1) -- (\lstmnode@prefix-times1);
+  \draw[flow] (\lstmnode@prefix-times1) -- (\lstmnode@prefix-plus);
+  \draw[flow] (\lstmnode@prefix-ht-1) -| (\lstmnode@prefix-sigmoid2);
+  \draw[flow] (\lstmnode@prefix-sigmoid2) |- (\lstmnode@prefix-times2);
+  \draw[flow] (\lstmnode@prefix-ht-1) -| (\lstmnode@prefix-tanh1);
+  \draw[flow] (\lstmnode@prefix-tanh1) -- (\lstmnode@prefix-times2);
+  \draw[flow] (\lstmnode@prefix-times2) -- (\lstmnode@prefix-plus);
+  \draw[flow] (\lstmnode@prefix-ht-1) -| (\lstmnode@prefix-sigmoid3);
+  \draw[flow] (\lstmnode@prefix-sigmoid3) |- (\lstmnode@prefix-times3);
+  \draw[flow] (\lstmnode@prefix-plus) -| (\lstmnode@prefix-tanh2);
+  \draw[flow] (\lstmnode@prefix-tanh2) -- (\lstmnode@prefix-times3);
+  \draw[flow, -] (\lstmnode@prefix-plus) -- (\lstmnode@prefix-mt);
+  \draw[flow, -] (\lstmnode@prefix-times3) |- (\lstmnode@prefix-ht);
+  \draw[flow, -] (\lstmnode@prefix-times3) -- (\lstmnode@prefix-ht -| \lstmnode@prefix-times3) -| ([yshift = -3.00pt]\lstmnode@prefix-ht' |- \lstmnode@prefix-plus);
+  \draw[flow, -] ([yshift = 3.00pt]\lstmnode@prefix-ht' |- \lstmnode@prefix-plus) -- (\lstmnode@prefix-ht');
+  \draw[flow, -] (\lstmnode@prefix-xt) |- (\lstmnode@prefix-ht-1 -| \lstmnode@prefix-sigmoid1);
+}
+
+\def\rnnnode@position{(0, 0)}
+\def\rnnnode@prefix{rnn}
+\def\drawrnnborder@prefix{rnn}
+\define@key{rnnnode}{position}{\renewcommand*{\rnnnode@position}{#1}}
+\define@key{rnnnode}{prefix}{\renewcommand*{\rnnnode@prefix}{#1}}
+\define@key{drawrnnborder}{prefix}{\renewcommand*{\drawrnnborder@prefix}{#1}}
+
+\newcommand{\drawrnnborder}[2][prefix = rnn]{
+  \setkeys{drawrnnborder}{#1}%
+  \draw[rounded corners = 4pt, green]
+    ([xshift = 3pt]\drawrnnborder@prefix-xt) -| ([yshift = -3pt]\drawrnnborder@prefix-ht)
+    ([yshift = 3pt]\drawrnnborder@prefix-ht) |- ([xshift = 3pt]\drawrnnborder@prefix-ht')
+    ([xshift = -3pt]\drawrnnborder@prefix-ht') -| ([yshift = 3pt]\drawrnnborder@prefix-ht-1)
+    ([yshift = -3pt]\drawrnnborder@prefix-ht-1) |- ([xshift = -3pt]\drawrnnborder@prefix-xt);
+}
+
+\newcommand{\rnnnode}[1][]{%
+  \setkeys{rnnnode}{#1}%
+
+  \node[frame, minimum width = 4cm, minimum height = 3cm, draw = none] at \rnnnode@position (\rnnnode@prefix-frame) {};
+  \node[rectangle operator] (\rnnnode@prefix-tanh) at (\rnnnode@prefix-frame) {$\tanh$};
+
+  \coordinate (\rnnnode@prefix-ht-1) at ($(\rnnnode@prefix-frame.west)!2/5!(\rnnnode@prefix-frame.north west)$);
+  \coordinate (\rnnnode@prefix-xt) at ([xshift = 0.5cm]\rnnnode@prefix-frame.south west);
+  \coordinate (\rnnnode@prefix-ht) at ($(\rnnnode@prefix-frame.east)!2/5!(\rnnnode@prefix-frame.north east)$);
+  \coordinate (\rnnnode@prefix-ht') at ([xshift = -0.5cm]\rnnnode@prefix-frame.north east);
+
+  \draw[flow] (\rnnnode@prefix-ht-1) -- ($(\rnnnode@prefix-ht-1)!0.5!(\rnnnode@prefix-tanh |- \rnnnode@prefix-ht-1)$) |- ($(\rnnnode@prefix-tanh.center)!2/5!(\rnnnode@prefix-frame.south)$) -- (\rnnnode@prefix-tanh);
+  \draw[flow] (\rnnnode@prefix-xt) |- ($(\rnnnode@prefix-tanh.center)!2/5!(\rnnnode@prefix-frame.south)$) -- (\rnnnode@prefix-tanh);
+  \draw[flow, -] (\rnnnode@prefix-tanh) |- (\rnnnode@prefix-ht);
+  \draw[flow, -] (\rnnnode@prefix-tanh) -- (\rnnnode@prefix-tanh |- \rnnnode@prefix-ht) -| (\rnnnode@prefix-ht');
+
+  \drawrnnborder[prefix = \rnnnode@prefix]{};
+}
+
+
+\def\encodernode@position{(0, 0)}
+\def\encodernode@prefix{encoder}
+\def\drawencoderborder@prefix{encoder}
+\define@key{encodernode}{position}{\renewcommand*{\encodernode@position}{#1}}
+\define@key{encodernode}{prefix}{\renewcommand*{\encodernode@prefix}{#1}}
+\define@key{drawencoderborder}{prefix}{\renewcommand*{\drawencoderborder@prefix}{#1}}
+
+\newcommand{\drawencoderborder}[2][prefix = encoder]{
+  \setkeys{drawencoderborder}{#1}%
+  \draw[rounded corners = 4pt, green]
+    ([yshift = 3pt]\drawencoderborder@prefix-mt-1) |- ([xshift = -3pt]\drawencoderborder@prefix-ht')
+    ([xshift = 3pt]\drawencoderborder@prefix-ht') -| ([yshift = 3pt]\drawencoderborder@prefix-mt)
+    ([yshift = -3pt]\drawencoderborder@prefix-mt) -- ([yshift = 3pt]\drawencoderborder@prefix-ht)
+    ([yshift = -3pt]\drawencoderborder@prefix-ht) |- ([xshift = 3pt]\drawencoderborder@prefix-xt)
+    ([xshift = -3pt]\drawencoderborder@prefix-xt) -| ([yshift = -3pt]\drawencoderborder@prefix-ht-1)
+    ([yshift = 3pt]\drawencoderborder@prefix-ht-1) -- ([yshift = -3pt]\drawencoderborder@prefix-mt-1);
+}
+
+\newcommand{\encodernode}[1][]{%
+  \setkeys{encodernode}{#1}%
+
+  \node[circle operator] (\encodernode@prefix-times1) at \encodernode@position {$\bm{\times}$};
+  \node[rectangle operator] (\encodernode@prefix-sigmoid1) at ([yshift = -2.5cm]\encodernode@prefix-times1)  {$\sigma$};
+  \node[rectangle operator] (\encodernode@prefix-sigmoid2) at ([xshift = 1cm]\encodernode@prefix-sigmoid1) {$\sigma$};
+  \node[rectangle operator] (\encodernode@prefix-tanh1)    at ([xshift = 1cm]\encodernode@prefix-sigmoid2) {$\tanh$};
+  \node[rectangle operator] (\encodernode@prefix-sigmoid3) at ([xshift = 1cm]\encodernode@prefix-tanh1)    {$\sigma$};
+
+  \node[circle operator] (\encodernode@prefix-plus) at (\encodernode@prefix-tanh1 |- \encodernode@prefix-times1) {$\bm{+}$};
+  \node[circle operator] (\encodernode@prefix-times2) at ($(\encodernode@prefix-tanh1)!0.5!(\encodernode@prefix-plus)$) {$\bm{\times}$};
+  \node[circle operator] (\encodernode@prefix-times3) at ($([xshift = 1cm]\encodernode@prefix-sigmoid3)!1/3!([xshift = 1cm]\encodernode@prefix-sigmoid3 |- \encodernode@prefix-plus)$) {$\bm{\times}$};
+  \node[ellipse operator] (\encodernode@prefix-tanh2) at ($([xshift = 1cm]\encodernode@prefix-sigmoid3)!2/3!([xshift = 1cm]\encodernode@prefix-sigmoid3 |- \encodernode@prefix-plus)$) {$\tanh$};
+
+  \coordinate (north west) at ([xshift = -0.5cm, yshift = 0.5cm]\encodernode@prefix-times1.center);
+  \coordinate (south east) at ([xshift = 2cm, yshift = -1cm]\encodernode@prefix-sigmoid3.center);
+
+  \begin{scope}[on background layer]
+    \node[frame, fit = (north west) (south east), draw = none] (\encodernode@prefix-frame) {};
+  \end{scope}
+
+  \coordinate (\encodernode@prefix-mt-1) at (\encodernode@prefix-times1 -| \encodernode@prefix-frame.west);
+  \coordinate (\encodernode@prefix-ht-1) at ([yshift = 0.5cm]\encodernode@prefix-frame.south west);
+  \coordinate (\encodernode@prefix-mt)   at (\encodernode@prefix-times1 -| \encodernode@prefix-frame.east);
+  \coordinate (\encodernode@prefix-ht)   at (\encodernode@prefix-ht-1 -| \encodernode@prefix-frame.east);
+  \coordinate (\encodernode@prefix-ht')  at ([xshift = -0.3cm]\encodernode@prefix-frame.north east);
+  \coordinate (\encodernode@prefix-xt)   at ([xshift = 0.25cm]\encodernode@prefix-frame.south west);
+
+
+  \drawencoderborder[prefix = \encodernode@prefix]{};
+
+  \draw[flow] (\encodernode@prefix-ht-1) -| (\encodernode@prefix-sigmoid1);
+  \draw[flow] (\encodernode@prefix-mt-1) -- (\encodernode@prefix-times1);
+  \draw[flow] (\encodernode@prefix-sigmoid1) -- (\encodernode@prefix-times1);
+  \draw[flow] (\encodernode@prefix-times1) -- (\encodernode@prefix-plus);
+  \draw[flow] (\encodernode@prefix-ht-1) -| (\encodernode@prefix-sigmoid2);
+  \draw[flow] (\encodernode@prefix-sigmoid2) |- (\encodernode@prefix-times2);
+  \draw[flow] (\encodernode@prefix-ht-1) -| (\encodernode@prefix-tanh1);
+  \draw[flow] (\encodernode@prefix-tanh1) -- (\encodernode@prefix-times2);
+  \draw[flow] (\encodernode@prefix-times2) -- (\encodernode@prefix-plus);
+  \draw[flow] (\encodernode@prefix-ht-1) -| (\encodernode@prefix-sigmoid3);
+  \draw[flow] (\encodernode@prefix-sigmoid3) |- (\encodernode@prefix-times3);
+  \draw[flow] (\encodernode@prefix-plus) -| (\encodernode@prefix-tanh2);
+  \draw[flow] (\encodernode@prefix-tanh2) -- (\encodernode@prefix-times3);
+  \draw[flow, -] (\encodernode@prefix-plus) -- (\encodernode@prefix-mt);
+  \draw[flow, -] (\encodernode@prefix-times3) |- (\encodernode@prefix-ht);
+  \draw[flow, -] (\encodernode@prefix-times3) -- (\encodernode@prefix-ht -| \encodernode@prefix-times3) -| ([yshift = -3.00pt]\encodernode@prefix-ht' |- \encodernode@prefix-plus);
+  \draw[flow, -] ([yshift = 3.00pt]\encodernode@prefix-ht' |- \encodernode@prefix-plus) -- (\encodernode@prefix-ht');
+  \draw[flow, -] (\encodernode@prefix-xt) |- (\encodernode@prefix-ht-1 -| \encodernode@prefix-sigmoid1);
+}
+
+\def\decodernode@position{(0, 0)}
+\def\decodernode@prefix{decoder}
+\def\drawdecoderborder@prefix{decoder}
+\define@key{decodernode}{position}{\renewcommand*{\decodernode@position}{#1}}
+\define@key{decodernode}{prefix}{\renewcommand*{\decodernode@prefix}{#1}}
+\define@key{drawdecoderborder}{prefix}{\renewcommand*{\drawdecoderborder@prefix}{#1}}
+
+\newcommand{\drawdecoderborder}[2][prefix = rnn]{
+  \setkeys{drawdecoderborder}{#1}%
+  \draw[rounded corners = 4pt, green]
+    ([yshift = 3pt]\drawdecoderborder@prefix-mt-1) |- ([xshift = -3pt]\drawdecoderborder@prefix-yt)
+    ([xshift = 3pt]\drawdecoderborder@prefix-yt) -| ([yshift = 3pt]\drawdecoderborder@prefix-mt)
+    ([yshift = -3pt]\drawdecoderborder@prefix-mt) -- ([yshift = 3pt]\drawdecoderborder@prefix-ht)
+    ([yshift = -3pt]\drawdecoderborder@prefix-ht) |- ([xshift = 3pt]\drawdecoderborder@prefix-ct)
+    ([xshift = -3pt]\drawdecoderborder@prefix-ct) -- ([xshift = 3pt]\drawdecoderborder@prefix-yt-1)
+    ([xshift = -3pt]\drawdecoderborder@prefix-yt-1) -| ([yshift = -3pt]\drawdecoderborder@prefix-ht-1)
+    ([yshift = 3pt]\drawdecoderborder@prefix-ht-1) -- ([yshift = -3pt]\drawdecoderborder@prefix-mt-1);
+}
+
+\newcommand{\decodernode}[1][]{%
+  \setkeys{decodernode}{#1}%
+  \node[rectangle operator] (\decodernode@prefix-fg) at \decodernode@position {$\sigma$};
+  \node[rectangle operator] (\decodernode@prefix-tanh) at ([xshift = 1cm]\decodernode@prefix-fg) {$\tanh$};
+  \node[rectangle operator] (\decodernode@prefix-ig) at ([xshift = 1cm]\decodernode@prefix-tanh) {$\sigma$};
+  \node[rectangle operator] (\decodernode@prefix-og) at ([xshift = 1cm]\decodernode@prefix-ig) {$\sigma$};
+  \node[circle operator] (\decodernode@prefix-times1) at ([yshift = 2.3cm]\decodernode@prefix-fg) {$\times$};
+
+  \coordinate (north west) at ([xshift = -0.5cm, yshift = 0.5cm]\decodernode@prefix-times1.center);
+  \coordinate (south east) at ([xshift = 2cm, yshift = -1.2cm]\decodernode@prefix-og.center);
+  \begin{scope}[on background layer]
+    \node[frame, fit = (north west) (south east), draw = none] (\decodernode@prefix-frame) {};
+  \end{scope}
+
+  \node[circle operator] (\decodernode@prefix-plus) at (\decodernode@prefix-times1 -| \decodernode@prefix-ig) {$+$};
+  \node[circle operator] (\decodernode@prefix-times2) at ($(\decodernode@prefix-plus)!0.5!(\decodernode@prefix-ig)$) {$\times$};
+  \node[circle operator] (\decodernode@prefix-times3) at ($(\decodernode@prefix-plus -| \decodernode@prefix-og)!2/3!(\decodernode@prefix-og)$) {$\times$};
+  \node[rectangle operator] (\decodernode@prefix-rho) at ([xshift = -0.5cm]$(\decodernode@prefix-plus -| \decodernode@prefix-frame.east)!1/3!(\decodernode@prefix-og -| \decodernode@prefix-frame.east)$) {$\rho$};
+
+  \coordinate (\decodernode@prefix-mt-1) at (\decodernode@prefix-times1 -| \decodernode@prefix-frame.west);
+  \coordinate (\decodernode@prefix-yt-1') at ([xshift = 0.2cm, yshift = 0.2cm]\decodernode@prefix-frame.south west);
+  \coordinate (\decodernode@prefix-yt-1) at (\decodernode@prefix-fg |- \decodernode@prefix-frame.south);
+
+  \coordinate (\decodernode@prefix-ct) at (\decodernode@prefix-rho |- \decodernode@prefix-frame.south);
+  \coordinate (\decodernode@prefix-ht-1) at ([yshift = 0.6cm]\decodernode@prefix-frame.south west);
+  \coordinate (\decodernode@prefix-mt) at (\decodernode@prefix-mt-1 -| \decodernode@prefix-frame.east);
+  \coordinate (\decodernode@prefix-ht) at (\decodernode@prefix-ht-1 -| \decodernode@prefix-frame.east);
+  \coordinate (\decodernode@prefix-yt) at (\decodernode@prefix-rho |- \decodernode@prefix-frame.north);
+
+  \coordinate (\decodernode@prefix-mh) at (\decodernode@prefix-rho |- \decodernode@prefix-mt);
+  \coordinate (\decodernode@prefix-ch) at (\decodernode@prefix-ct |- \decodernode@prefix-ht-1);
+
+  \draw[flow] (\decodernode@prefix-mt-1) -- (\decodernode@prefix-times1);
+  \draw[flow] (\decodernode@prefix-ht-1) -| (\decodernode@prefix-fg);
+  \draw[flow] (\decodernode@prefix-ht-1) -| (\decodernode@prefix-tanh);
+  \draw[flow] (\decodernode@prefix-ht-1) -| (\decodernode@prefix-ig);
+  \draw[flow] (\decodernode@prefix-ht-1) -| (\decodernode@prefix-og);
+  \draw[flow, -] (\decodernode@prefix-yt-1) |- (\decodernode@prefix-yt-1') |- (\decodernode@prefix-fg |- \decodernode@prefix-ht-1);
+
+
+  \draw[flow] (\decodernode@prefix-fg) -- (\decodernode@prefix-times1);
+  \draw[flow] (\decodernode@prefix-tanh) |- (\decodernode@prefix-times2);
+  \draw[flow] (\decodernode@prefix-ig) -- (\decodernode@prefix-times2);
+  \draw[flow] (\decodernode@prefix-times2) -- (\decodernode@prefix-plus);
+  \draw[flow] (\decodernode@prefix-times1) -- (\decodernode@prefix-plus);
+  \draw[flow, -] (\decodernode@prefix-plus) -- (\decodernode@prefix-mt);
+  \draw[flow] (\decodernode@prefix-plus) -| (\decodernode@prefix-times3);
+  \draw[flow] (\decodernode@prefix-og) -- (\decodernode@prefix-times3);
+  \draw[flow, -] (\decodernode@prefix-times3) -- ++(0:0.7cm) |- (\decodernode@prefix-ht);
+  \draw[flow,] (\decodernode@prefix-times3) -| (\decodernode@prefix-rho);
+  \draw[flow, -] (\decodernode@prefix-rho) -- ([yshift = -3.00pt]\decodernode@prefix-mh) ([yshift = 3.00pt]\decodernode@prefix-mh) -- (\decodernode@prefix-yt);
+  \draw[flow] (\decodernode@prefix-ct) -- ([yshift = -3.00pt]\decodernode@prefix-ch) ([yshift = 3.00pt]\decodernode@prefix-ch) -- (\decodernode@prefix-rho);
+  \draw[flow, -] (\decodernode@prefix-ct) |- (\decodernode@prefix-yt-1') |- (\decodernode@prefix-fg |- \decodernode@prefix-ht-1);
+  \drawdecoderborder[prefix = \decodernode@prefix]{};
+}
+\makeatother
