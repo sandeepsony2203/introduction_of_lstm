@@ -1,0 +1,25 @@
+\begin{tikzpicture}
+  \node[rectangle operator] (sigmoid) {$\sigma$};
+  \node[rectangle operator, anchor = west] (tanh) at ([xshift = 2pt]sigmoid.east) {$\tanh$};
+
+  \node[circle operator, anchor = west] (times) at ([xshift = 1cm]tanh.east) {$\times$};
+  \node[circle operator, anchor = west] (plus) at ([xshift = 2pt]times.east) {$+$};
+  \node[ellipse operator, anchor = west] (tanh') at ([xshift = 2pt]plus.east) {$\tanh$};
+
+  \draw[flow] ([xshift = 1cm]tanh'.east) coordinate(trans1) -- ++(0:1.5cm) coordinate (trans2);
+  \coordinate(trans) at ($(trans1)!0.5!(trans2)$);
+
+  \draw[flow] ([xshift = 1cm, yshift = 4pt]trans2) to[out = -15, in = 180] ([xshift = 2.5cm]trans2) coordinate (cat2);
+  \draw[flow] ([xshift = 1cm, yshift = -4pt]trans2) to[out = 15, in = 180] ([xshift = 2.5cm]trans2);
+  \coordinate (cat) at ($([xshift = 1cm]trans2)!0.5!(cat2)$);
+
+  \draw[flow] ([xshift = 1cm]cat2) to[in = 195, out = 0] ([xshift = 2.5cm, yshift = 4pt]cat2);
+  \draw[flow] ([xshift = 1cm]cat2) to[in = 165, out = 0] ([xshift = 2.5cm, yshift = -4pt]cat2);
+  \coordinate (copy) at ([xshift = 1.75cm]cat2);
+
+  \node[below = 0.5cm] at ($(sigmoid)!0.5!(tanh)$) {神经网络};
+  \node[below = 0.5cm] at ($(times.west)!0.5!(tanh'.east)$) {逐点运算};
+  \node[below = 0.5cm] at (trans) {传输};
+  \node[below = 0.5cm] at (cat) {连接};
+  \node[below = 0.5cm] at (copy) {复制};
+\end{tikzpicture}

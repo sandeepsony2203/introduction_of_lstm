@@ -1,0 +1,26 @@
+\begin{tikzpicture}
+  \lstmnode{};
+
+  \coordinate (ht-1) at ([xshift = -1cm]lstm-ht-1);
+  \coordinate (mt-1) at ([xshift = -1cm]lstm-mt-1);
+  \coordinate (ht)   at ([xshift = 1cm]lstm-ht);
+  \coordinate (mt)   at ([xshift = 1cm]lstm-mt);
+  \draw[flow]    (lstm-ht) -- (ht) node[midway, above] {$\vec{h}_{t}$};
+  \draw[flow, -] (lstm-ht-1) -- (ht-1) node[midway, above] {$\vec{h}_{t-1}$};
+  \draw[flow]    (lstm-mt) -- (mt) node[midway, above] {$\vec{m}_{t}$};
+  \draw[flow, -] (lstm-mt-1) -- (mt-1) node[midway, above] {$\vec{m}_{t-1}$};
+  \draw[flow]    (lstm-ht') -- ++(90:0.5cm) node[output, anchor = south] (ht') {$\vec{h}_{t}$};
+  \draw[flow, -] (lstm-xt) -- ++(-90:0.5cm) node[input, anchor = north] (xt) {$\vec{x}_{t}$};
+
+  \node[cover, fit = (xt.south -| ht-1) (ht |- ht'.north)] {};
+  \drawlstmborder{};
+
+  \node[input] at (xt) {$\vec{x}_{t}$};
+  \draw[flow, -] (ht-1) -- (lstm-ht-1) node[midway, above] {$\vec{h}_{t-1}$};
+  \draw[flow] (xt) |- (lstm-sigmoid1 |- lstm-ht-1) -| (lstm-tanh1);
+  \draw[flow] (lstm-ht-1) -| (lstm-sigmoid2);
+  \node[rectangle operator] at (lstm-sigmoid2) {$\sigma$};
+  \node[rectangle operator] at (lstm-tanh1) {$\tanh$};
+  \draw[flow] (lstm-sigmoid2) |- (lstm-times2) node[midway, left] {$\vec{i}_t$};
+  \draw[flow] (lstm-tanh1) -- (lstm-times2) node[midway, left] {$\vec{m}'_t$};
+\end{tikzpicture}
