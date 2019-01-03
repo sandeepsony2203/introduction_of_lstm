@@ -1,0 +1,32 @@
+\begin{tikzpicture}
+  \encodernode[position = {(0, 5)}, prefix = encoder1]{};
+  \encodernode[position = {(6.5, 5)}, prefix = encoder2]{};
+  \encodernode[position = {(15, 5)}, prefix = encoder3]{};
+
+  \node[fit = (encoder1-frame.north west) (encoder1-frame.south east), cover] {};
+  \node[fit = (encoder3-frame.north west) (encoder3-frame.south east), cover] {};
+  \drawencoderborder[prefix = encoder1]{};
+  \drawencoderborder[prefix = encoder3]{};
+
+  \node[scale = 6] at (encoder1-frame.center) {\shadowtext{$E_{\smash{1}}$}};
+  \node[scale = 6] at (encoder3-frame.center) {\shadowtext{$E_{\smash{\ell(i)}}$}};
+
+  \node (cdots1) at ($(encoder2-mt)!0.4!(encoder3-mt-1)$) {$\cdots$};
+  \node (cdots2) at ($(encoder2-ht)!0.4!(encoder3-ht-1)$) {$\cdots$};
+
+  \draw[flow, -] (encoder1-mt-1) -- ++(180:1cm) node[midway, above] {$\vec{m}_{0}$};
+  \draw[flow, -] (encoder1-ht-1) -- ++(180:1cm) node[midway, above] {$\vec{h}_{0}$};
+  \draw[flow, -] (encoder1-mt) -- (encoder2-mt-1)  node[midway, above] {$\vec{m}_{1}$};
+  \draw[flow, -] (encoder1-ht) -- (encoder2-ht-1)  node[midway, above] {$\vec{h}_{1}$};
+  \draw[flow]    (encoder2-mt) -- (cdots1) node[midway, above] {$\vec{m}_{2}$};
+  \draw[flow]    (encoder2-ht) -- (cdots2) node[midway, above] {$\vec{h}_{2}$};
+  \draw[flow, -] (cdots1) -- (encoder3-mt-1) node[midway, above] {$\vec{m}_{\ell(i) - 1}$};
+  \draw[flow, -] (cdots2) -- (encoder3-ht-1) node[midway, above] {$\vec{h}_{\ell(i) - 1}$};
+  \draw[flow]    (encoder3-mt) -- ++(0:1cm)     node[midway, above] {$\vec{m}_{\ell(i)}$};
+  \draw[flow]    (encoder3-ht) -- ++(0:1cm)     node[midway, above] {$\vec{h}_{\ell(i)}$};
+
+  \foreach \h/\x [count = \i] in {1/1, 2/2, \ell(i)/\ell(i)}{%
+    \draw[flow] (encoder\i-ht') -- ++(90:0.5cm) node[output, anchor = south] {$\vec{h}_{\h}$};
+    \draw[flow, -] (encoder\i-xt) -- ++(-90:0.5cm) node[input, anchor = north] {$\vec{x}_{\x}$};
+  }
+\end{tikzpicture}

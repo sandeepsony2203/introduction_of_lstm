@@ -1,0 +1,193 @@
+\begin{tikzpicture}
+  \encodernode[position = {( 0.0, 0)}, prefix = encoder1]{};
+  \encodernode[position = {( 7.5, 0)}, prefix = encoder2]{};
+  \encodernode[position = {(15.0, 0)}, prefix = encoder3]{};
+  \encodernode[position = {(24.5, 0)}, prefix = encoder4]{};
+
+  \decodernode[position = {( 0.0, 11.8)}, prefix = decoder1]{};
+  \decodernode[position = {( 6.5, 11.8)}, prefix = decoder2]{};
+  \decodernode[position = {(15.5, 11.8)}, prefix = decoder3]{};
+  \decodernode[position = {(24.5, 11.8)}, prefix = decoder4]{};
+
+  \foreach [count = \i] \x in {1, 2, 3, \ell(i)}{
+    \draw[flow, -] (encoder\i-xt) -- ++(-90:0.5cm) node[anchor = north, input] {\shadowtext{$\mathclap{\vec{x}_{\x}}$}};
+  }
+
+  \node (edots1) at ($(encoder3-mt)!0.5!(encoder4-mt-1)$) {$\cdots$};
+  \node (edots2) at ($(encoder3-ht)!0.5!(encoder4-ht-1)$) {$\cdots$};
+
+  \draw[flow, -] (encoder1-mt-1) --++(180:0.8cm) node[midway, above] {$\vec{m}_0$};
+  \draw[flow, -] (encoder1-ht-1) --++(180:0.8cm) node[midway, above] {$\vec{h}_0$};
+  \draw[flow, -] (encoder1-mt) -- (encoder2-mt-1) node[midway, above] {$\vec{m}_1$};
+  \draw[flow, -] (encoder1-ht) -- (encoder2-ht-1) node[midway, above] {$\vec{h}_1$};
+  \draw[flow, -] (encoder2-mt) -- (encoder3-mt-1) node[midway, above] {$\vec{m}_2$};
+  \draw[flow, -] (encoder2-ht) -- (encoder3-ht-1) node[midway, above] {$\vec{h}_2$};
+  \draw[flow]    (encoder3-mt) -- (edots1) node[midway, above] {$\vec{m}_3$};
+  \draw[flow]    (encoder3-ht) -- (edots2) node[midway, above] {$\vec{h}_3$};
+  \draw[flow, -] (edots1) -- (encoder4-mt-1) node[pos = 0.48, above] {$\vec{m}_{\smash{\ell(i) - 1}}$};
+  \draw[flow, -] (edots2) -- (encoder4-ht-1) node[pos = 0.48, above] {$\vec{h}_{\smash{\ell(i) - 1}}$};
+  \draw[flow]    (encoder4-mt) --++(0:1.2cm) node[midway, above] {$\vec{m}_{\smash{\ell(i)}}$};
+  \draw[flow]    (encoder4-ht) --++(0:1.2cm) node[midway, above] {$\vec{h}_{\smash{\ell(i)}}$};
+
+  \foreach [count = \i] \t/\y/\x in {\vec{c}_1/\texttt{SOS}/\vec{y}_1, \vec{c}_2/\vec{y}'_1/\vec{y}_2, \vec{c}_t/\vec{y}'_{t-1}/\vec{y}_{t}, \vec{c}_{\ell(o)+1}/\vec{y}'_{\ell(o)}/\texttt{EOS}}{
+    \draw[flow, -] (decoder\i-ct) -- ++(-90:0.5cm) node[anchor = north, input] (c\i) {\shadowtext{$\mathclap{\t}$}};
+    \draw[flow, -] (decoder\i-yt-1) -- ++(-90:0.5cm) node[anchor = north, input] (y\i) {\shadowtext{$\mathclap{\y}$}};
+    \draw[flow, -] (decoder\i-yt) -- ++(90:0.5cm) node[anchor = south, output] (y\i') {\shadowtext{$\mathclap{\x}$}};;
+  }
+
+  \node (ddots11) at ($(decoder2-mt)!0.5!(decoder3-mt-1)$) {$\cdots$};
+  \node (ddots12) at ($(decoder2-ht)!0.5!(decoder3-ht-1)$) {$\cdots$};
+  \node (ddots10) at (y1' -| ddots11) {$\cdots$};
+  \node (ddots13) at (y1 -| ddots11) {$\cdots$};
+
+  \node (ddots21) at ($(decoder3-mt)!0.5!(decoder4-mt-1)$) {$\cdots$};
+  \node (ddots22) at ($(decoder3-ht)!0.5!(decoder4-ht-1)$) {$\cdots$};
+  \node (ddots20) at (y1' -| ddots21) {$\cdots$};
+  \node (ddots23) at (y1 -| ddots21) {$\cdots$};
+
+  \draw[flow, -] (decoder1-mt-1) --++(180:0.8cm) node[midway, above] {\shadowtext{$\vec{n}_0$}};
+  \draw[flow, -] (decoder1-ht-1) --++(180:0.8cm) node[midway, above] {\shadowtext{$\vec{s}_0$}};
+  \draw[flow, -] (decoder1-mt) -- (decoder2-mt-1) node[midway, above] {\shadowtext{$\vec{n}_1$}};
+  \draw[flow, -] (decoder1-ht) -- (decoder2-ht-1) node[midway, above] {\shadowtext{$\vec{s}_1$}};
+  \draw[flow]    (decoder2-mt) -- (ddots11) node[midway, above] {\shadowtext{$\vec{n}_2$}};
+  \draw[flow]    (decoder2-ht) -- (ddots12) node[midway, above] {\shadowtext{$\vec{s}_2$}};
+  \draw[flow, -] (ddots11) -- (decoder3-mt-1) node[midway, above] {\shadowtext{$\vec{n}_{t-1}$}};
+  \draw[flow, -] (ddots12) -- (decoder3-ht-1) node[midway, above] {\shadowtext{$\vec{s}_{t-1}$}};
+  \draw[flow]    (decoder3-mt) -- (ddots21) node[midway, above] {\shadowtext{$\vec{n}_t$}};
+  \draw[flow]    (decoder3-ht) -- (ddots22) node[midway, above] {\shadowtext{$\vec{s}_t$}};
+  \draw[flow, -] (ddots21) -- (decoder4-mt-1) node[pos = 0.48, above] {\shadowtext{$\vec{n}_{\smash{\ell(o)}}$}};
+  \draw[flow, -] (ddots22) -- (decoder4-ht-1) node[pos = 0.48, above] {\shadowtext{$\vec{s}_{\smash{\ell(o)}}$}};
+  \draw[flow]    (decoder4-mt) --++(0:1.2cm) node[midway, above] {\shadowtext{$\vec{n}_{\smash{\ell(o) + 1}}$}};
+  \draw[flow]    (decoder4-ht) --++(0:1.2cm) node[midway, above] {\shadowtext{$\vec{s}_{\smash{\ell(o) + 1}}$}};
+
+  \coordinate (m12) at ([xshift = 1cm]y1' |- decoder1-mt);
+  \coordinate (h12) at ([xshift = 1cm]y1' |- decoder1-ht);
+  \coordinate (m2i) at ([xshift = 1cm]y2' |- decoder1-mt);
+  \coordinate (h2i) at ([xshift = 1cm]y2' |- decoder1-ht);
+  \coordinate (mi3) at ([xshift = -1cm]y3 |- decoder1-mt);
+  \coordinate (hi3) at ([xshift = -1cm]y3 |- decoder1-ht);
+  \coordinate (m3j) at ([xshift = 1cm]y3' |- decoder1-mt);
+  \coordinate (h3j) at ([xshift = 1cm]y3' |- decoder1-ht);
+  \coordinate (mj4) at ([xshift = -1cm]y4 |- decoder1-mt);
+  \coordinate (hj4) at ([xshift = -1cm]y4 |- decoder1-ht);
+
+  \node[rectangle operator, fill = black] (E1) at ($(m12)!0.5!(h12)$) {$\varepsilon$};
+  \node[rectangle operator, fill = black] (E2) at ($(m2i)!0.5!(h2i)$) {$\varepsilon$};
+  \node[rectangle operator, fill = black] (E3) at ($(mi3)!0.5!(hi3)$) {$\varepsilon$};
+  \node[rectangle operator, fill = black] (E4) at ($(m3j)!0.5!(h3j)$) {$\varepsilon$};
+  \node[rectangle operator, fill = black] (E5) at ($(mj4)!0.5!(hj4)$) {$\varepsilon$};
+
+  \begin{scope}[on background layer]
+    \draw[flow] (y1')     -| ([yshift = 3pt]m12) ([yshift = -3pt]m12) -- (E1); \draw[flow] (E1) -- ([yshift = 3pt]h12) ([yshift = -3pt]h12) |- (y2);
+    \draw[flow] (y2')     -| ([yshift = 3pt]m2i) ([yshift = -3pt]m2i) -- (E2); \draw[flow] (E2) -- ([yshift = 3pt]h2i) ([yshift = -3pt]h2i) |- (ddots13);
+    \draw[flow] (ddots10) -| ([yshift = 3pt]mi3) ([yshift = -3pt]mi3) -- (E3); \draw[flow] (E3) -- ([yshift = 3pt]hi3) ([yshift = -3pt]hi3) |- (y3);
+    \draw[flow] (y3')     -| ([yshift = 3pt]m3j) ([yshift = -3pt]m3j) -- (E4); \draw[flow] (E4) -- ([yshift = 3pt]h3j) ([yshift = -3pt]h3j) |- (ddots23);
+    \draw[flow] (ddots20) -| ([yshift = 3pt]mj4) ([yshift = -3pt]mj4) -- (E5); \draw[flow] (E5) -- ([yshift = 3pt]hj4) ([yshift = -3pt]hj4) |- (y4);
+  \end{scope}
+
+  \coordinate (hh) at (0, 2);
+  \node[output] (h1) at ([xshift = -8cm/3]hh -| c3) {\shadowtext{$\mathclap{\vec{h}_1}$}};
+  \node[output] (h2) at ([xshift = -4cm/3]hh -| c3) {\shadowtext{$\mathclap{\vec{h}_2}$}};
+  \node[output] (h3) at ([xshift =  0.0cm]hh -| c3) {\shadowtext{$\mathclap{\vec{h}_3}$}};
+  \node         (hd) at ([xshift =  4cm/3]hh -| c3) {\shadowtext{$\mathclap{\cdots}$}};
+  \node[output] (h4) at ([xshift =  8cm/3]hh -| c3) {\shadowtext{$\mathclap{\vec{h}_{\ell(i)}}$}};
+
+  \node[rectangle operator] (tanh1) at ([xshift = -2cm/3, yshift = 2.5cm]h1) {$\tanh$};
+  \node[rectangle operator] (tanh2) at ([xshift = -2cm/3, yshift = 2.5cm]h2) {$\tanh$};
+  \node[rectangle operator] (tanh3) at ([xshift = -2cm/3, yshift = 2.5cm]h3) {$\tanh$};
+  \node[rectangle operator] (tanh4) at ([xshift = -2cm/3, yshift = 2.5cm]h4) {$\tanh$};
+
+  \draw[flow] (encoder1-ht') --++(90:0.5cm) -| (h1);
+  \draw[flow] (encoder2-ht') --++(90:0.3cm) -| (h2);
+  \draw[flow] (encoder3-ht') --++(90:0.3cm) -| (h3);
+  \draw[flow] (encoder4-ht') --++(90:0.5cm) -| (h4);
+
+  \coordinate (corner) at ([yshift = 0.5cm, xshift = -1cm]h1.north);
+  \node (cdots1) at (corner -| hd) {$\cdots$};
+
+  \draw[flow, -] (ddots12.east) -- ++(0:0.4cm) |- (corner);
+
+  \draw[flow] (corner) -| (tanh1);
+  \draw[flow] (corner) -| (tanh2);
+  \draw[flow] (corner) -| (tanh3);
+  \draw[flow] (cdots1) -| (tanh4);
+  \draw[flow] (corner) -- (cdots1);
+
+  \coordinate (aboveh1) at (h1 |- corner);
+  \coordinate (aboveh2) at (h2 |- corner);
+  \coordinate (aboveh3) at (h3 |- corner);
+  \coordinate (aboveh4) at (h4 |- corner);
+
+  \draw[flow] ([yshift = 3pt]aboveh1) -- ($(tanh1.south -| aboveh1)!0.5!(aboveh1)$) -| (tanh1);
+  \draw[flow] ([yshift = 3pt]aboveh2) -- ($(tanh2.south -| aboveh2)!0.5!(aboveh2)$) -| (tanh2);
+  \draw[flow] ([yshift = 3pt]aboveh3) -- ($(tanh3.south -| aboveh3)!0.5!(aboveh3)$) -| (tanh3);
+  \draw[flow] ([yshift = 3pt]aboveh4) -- ($(tanh4.south -| aboveh4)!0.5!(aboveh4)$) -| (tanh4);
+
+  \node[circle operator] (times1) at ([yshift = 4.8cm]h1) {$\times$};
+  \node[circle operator] (times2) at ([yshift = 4.8cm]h2) {$\times$};
+  \node[circle operator] (times3) at ([yshift = 4.8cm]h3) {$\times$};
+  \node[circle operator] (times4) at ([yshift = 4.8cm]h4) {$\times$};
+
+  \node[rectangle operator, fill = black, minimum width = 16cm/3 + 0.8cm] (softmax) at ([yshift = 3.8cm, xshift = -2cm/3]h3) {$\softmax$};
+  \node[rectangle operator, fill = black, minimum width = 16cm/3 + 0.4cm] (plus) at ([yshift = 5.6cm]h3) {$+$};
+  \coordinate (north west) at (plus.north -| tanh1.west);
+  \coordinate (south east) at (corner -| times4.east);
+
+  \begin{scope}[on background layer]
+    \node[frame, fit = (north west) (south east), inner sep = 0.3cm, draw = none, fill = lightblue] (frame) {};
+  \end{scope}
+
+  \draw[flow] (h1) -- ([yshift = -3pt]aboveh1)    ([yshift = 3pt]aboveh1) -- ([yshift = -3pt]softmax.south -| h1)    ([yshift = 3pt]softmax.north -| h1) -- (times1);
+  \draw[flow] (h2) -- ([yshift = -3pt]aboveh2)    ([yshift = 3pt]aboveh2) -- ([yshift = -3pt]softmax.south -| h2)    ([yshift = 3pt]softmax.north -| h2) -- (times2);
+  \draw[flow] (h3) -- ([yshift = -3pt]aboveh3)    ([yshift = 3pt]aboveh3) -- ([yshift = -3pt]softmax.south -| h3)    ([yshift = 3pt]softmax.north -| h3) -- (times3);
+  \draw[flow] (h4) -- ([yshift = -3pt]aboveh4) -- ([yshift = 3pt]aboveh4) -- ([yshift = -3pt]softmax.south -| h4) -- ([yshift = 3pt]softmax.north -| h4) -- (times4);
+
+  \draw[flow] (tanh1) -- (softmax.south -| tanh1); \draw[flow] (softmax.north -| tanh1) |- (times1);
+  \draw[flow] (tanh2) -- (softmax.south -| tanh2); \draw[flow] (softmax.north -| tanh2) |- (times2);
+  \draw[flow] (tanh3) -- (softmax.south -| tanh3); \draw[flow] (softmax.north -| tanh3) |- (times3);
+  \draw[flow] (tanh4) -- (softmax.south -| tanh4); \draw[flow] (softmax.north -| tanh4) |- (times4);
+
+  \node (cdots2) at ($(tanh3)!0.5!(tanh4)$)   {$\cdots$};
+  \node (cdots4) at (hd |- times1) {$\cdots$};
+  \draw[flow] (times1) -- (times1 |- plus.south);
+  \draw[flow] (times2) -- (times2 |- plus.south);
+  \draw[flow] (times3) -- (times3 |- plus.south);
+  \draw[flow] (times4) -- (times4 |- plus.south);
+  % \draw[flow] (cdots5) -| (plus);
+
+  \coordinate (fh1) at (h1 |- frame.south);
+  \coordinate (fh2) at (h2 |- frame.south);
+  \coordinate (fh3) at (h3 |- frame.south);
+  \coordinate (fh4) at (h4 |- frame.south);
+  \coordinate (fc)  at (corner -| frame.west);
+  \coordinate (fo)  at (plus |- frame.north);
+
+  \draw[rounded corners = 4pt, blue]
+    ([xshift = 3pt]fh1) -- ([xshift = -3pt]fh2)
+    ([xshift = 3pt]fh2) -- ([xshift = -3pt]fh3)
+    ([xshift = 3pt]fh3) -- ([xshift = -3pt]fh4)
+    ([xshift = 3pt]fh4) -| (frame.east)
+    (frame.east) |- ([xshift = 3pt]fo)
+    ([xshift = -3pt]fo) -| ([yshift = 3pt]fc)
+    ([yshift = -3pt]fc) |- ([xshift = -3pt]fh1);
+
+  \draw[flow] (plus) -- (c3);
+
+  \node[anchor = south east] at (corner -| frame.west) {$\vec{s}_{t-1}$};
+  \node[inner sep = 1pt] at ($(tanh1)!0.5!(tanh1 |- softmax.south)$) {\shadowtext[lightblue]{$e_{t,1}$}};
+  \node[inner sep = 1pt] at ($(tanh2)!0.5!(tanh2 |- softmax.south)$) {\shadowtext[lightblue]{$e_{t,2}$}};
+  \node[inner sep = 1pt] at ($(tanh3)!0.5!(tanh3 |- softmax.south)$) {\shadowtext[lightblue]{$e_{t,3}$}};
+  \node[inner sep = 1pt] at ($(tanh4)!0.5!(tanh4 |- softmax.south)$) {\shadowtext[lightblue]{$e_{t,\smash{\ell(i)}}$}};
+
+  \node[anchor = south, inner sep = 1pt] at ([yshift = 5pt]softmax.north -| tanh1) {\shadowtext[lightblue]{$a_{t,1}$}};
+  \node[anchor = south, inner sep = 1pt] at ([yshift = 5pt]softmax.north -| tanh2) {\shadowtext[lightblue]{$a_{t,2}$}};
+  \node[anchor = south, inner sep = 1pt] at ([yshift = 5pt]softmax.north -| tanh3) {\shadowtext[lightblue]{$a_{t,3}$}};
+  \node[anchor = south, inner sep = 1pt] at ([yshift = 5pt]softmax.north -| tanh4) {\shadowtext[lightblue]{$a_{t,\smash{\ell(i)}}$}};
+
+  \node[anchor = south west, inner sep = 3pt, align = flush left, font = \sc] at (frame.north west) {Soft\\[-4pt]Attention Model};
+
+  \foreach [count = \i] \x/\y in {1/1, 2/2, t/3, \smash{\ell(o) + 1}/\smash{\ell(i)}}{
+    \node[anchor = south west, inner sep = 3pt, align = flush left, font = \sc] at (encoder\i-frame.north west) {\shadowtext{Encoder $E_{\y}$}};
+    \node[anchor = south west, inner sep = 3pt, align = flush left, font = \sc] at (decoder\i-frame.north west) {Decoder $D_{\x}$};
+  }
+\end{tikzpicture}

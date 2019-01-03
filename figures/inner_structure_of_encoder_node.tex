@@ -1,0 +1,15 @@
+\begin{tikzpicture}
+  \encodernode[]{};
+
+  \draw[flow, -] (encoder-mt-1) -- ++(180:1cm) node[midway, above] {$\vec{m}_{t-1}$};
+  \draw[flow, -] (encoder-ht-1) -- ++(180:1cm) node[midway, above] {$\vec{h}_{t-1}$};
+  \draw[flow]    (encoder-mt)   -- ++(0:1cm) node[midway, above] {$\vec{m}_{t}$};
+  \draw[flow]    (encoder-ht)   -- ++(0:1cm) node[midway, above] {$\vec{h}_{t}$};
+  \draw[flow]    (encoder-ht')  -- ++(90:0.5cm) node[output, anchor = south] {$\vec{h}_{t}$};
+  \draw[flow, -] (encoder-xt)   -- ++(-90:0.5cm) node[input, anchor = north] {$\vec{x}_{t}$};
+
+  \path (encoder-sigmoid1) -- (encoder-times1) node[midway, left] {$\vec{f}_t$};
+  \path (encoder-sigmoid2) |- (encoder-times2) node[midway, left] {$\vec{i}_t$};
+  \path (encoder-tanh1) -- (encoder-times2) node[midway, left] {$\vec{m}'_t$};
+  \path (encoder-sigmoid3) |- (encoder-times3) node[midway, left] {$\vec{o}_t$};
+\end{tikzpicture}

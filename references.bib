@@ -1,16 +1,622 @@
 % Encoding: UTF-8
 
-@article{lshort,
-  title={The Not So Short Introduction to LATEX 2},
-  author={Oetiker, Tobias and Partl, Hubert and Hyna, Irene and Schlegl, Elisabeth},
-  journal={Or LATEX 2d in},
-  volume={69},
-  year={2011},
-  publisher={Citeseer}
+% Encoding: UTF-8
+
+@Article{Mikolov-2013-p-,
+  author    = {Tomas Mikolov and Quoc V. Le and Ilya Sutskever},
+  title     = {Exploiting Similarities among Languages for Machine Translation},
+  journal   = {CoRR},
+  year      = {2013},
+  volume    = {abs/1309.4168},
+  bibsource = {dblp computer science bibliography, http://dblp.org},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/MikolovLS13},
+  file      = {Mikolov-2013-p-.pdf:FullText\\Mikolov-2013-p-.pdf:PDF},
+  groups    = {词向量},
+  keywords  = {rank3},
+  review    = {word2vec 开山之作},
+  timestamp = {Wed, 07 Jun 2017 14:40:03 +0200},
+  url       = {http://arxiv.org/abs/1309.4168},
 }
 
-@article{pgfmanual,
-  title={The TikZ and PGF Packages},
-  author={Tantau, Till},
-  year={2015}
+@Article{Goldberg-2014-p-,
+  author    = {Yoav Goldberg and Omer Levy},
+  title     = {word2vec Explained: deriving Mikolov et al.'s negative-sampling word-embedding method},
+  journal   = {CoRR},
+  year      = {2014},
+  volume    = {abs/1402.3722},
+  bibsource = {dblp computer science bibliography, http://dblp.org},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/GoldbergL14},
+  file      = {Goldberg-2014-p-.pdf:FullText\\Goldberg-2014-p-.pdf:PDF},
+  groups    = {词向量},
+  keywords  = {rank4},
+  review    = {对 word2vec 文章\cite{Mikolov-2013-p-}进一步解释},
+  timestamp = {Wed, 07 Jun 2017 14:43:07 +0200},
+  url       = {http://arxiv.org/abs/1402.3722},
+}
+
+@Booklet{Shujun-2014-p-,
+  title    = {Deep Learning 实战之 word2vec},
+  author   = {Deng Shujun and Lu Guangming and Xia Long},
+  month    = {February},
+  year     = {2014},
+  file     = {Shujun-2014-p-.pdf:FullText\\Shujun-2014-p-.pdf:PDF},
+  groups   = {词向量},
+  keywords = {rank2},
+  review   = {对词向量介绍的比较详细，中文版。},
+}
+
+@Article{Rong-2014-p-,
+  author    = {Xin Rong},
+  title     = {word2vec Parameter Learning Explained},
+  journal   = {CoRR},
+  year      = {2014},
+  volume    = {abs/1411.2738},
+  bibsource = {dblp computer science bibliography, http://dblp.org},
+  biburl    = {http://dblp.uni-trier.de/rec/bib/journals/corr/Rong14},
+  file      = {Rong-2014-p-.pdf:FullText\\Rong-2014-p-.pdf:PDF},
+  groups    = {词向量},
+  keywords  = {rank4},
+  review    = {这篇文章讲 Word2vec 也挺详细的。},
+  timestamp = {Wed, 07 Jun 2017 14:43:03 +0200},
+  url       = {http://arxiv.org/abs/1411.2738},
+}
+
+@Article{Bahdanau-2014-p-,
+  author   = {Bahdanau, Dzmitry and Cho, Kyunghyun and Bengio, Yoshua},
+  title    = {Neural machine translation by jointly learning to align and translate},
+  journal  = {arXiv preprint arXiv:1409.0473},
+  year     = {2014},
+  file     = {Bahdanau-2014-p-.pdf:FullText\\Bahdanau-2014-p-.pdf:PDF},
+  groups   = {Seq2seq},
+  keywords = {rank5},
+  review   = {这篇文献主要介绍 Attention 向量的计算过程，也有对齐效果的图像化显示，在文章的附录部分还给出了 Encoder 和 Decoder 的详细算法，包括重要矩阵维度。},
+}
+
+@Article{Hochreiter-1997-p1735-1780,
+  author    = {Hochreiter, Sepp and Schmidhuber, J{\"u}rgen},
+  title     = {Long short-term memory},
+  journal   = {Neural computation},
+  year      = {1997},
+  volume    = {9},
+  number    = {8},
+  pages     = {1735--1780},
+  file      = {Hochreiter-1997-p1735-1780.pdf:FullText\\Hochreiter-1997-p1735-1780.pdf:PDF},
+  groups    = {Seq2seq},
+  keywords  = {rank3},
+  publisher = {MIT Press},
+  review    = {这篇文献是 LSTM 的开山之作，但是比较抽象，比较难看懂，推荐看以下两篇文献：
+1. http://colah.github.io/posts/2015-08-Understanding-LSTMs/
+2. http://blog.csdn.net/jerr__y/article/details/58598296
+其中文献 2 是文献 1 的中文版。},
+}
+
+@Misc{Schmidhuber-2003-p-,
+  author   = {Schmidhuber, J},
+  title    = {Long short-term memory: Tutorial on lstm recurrent networks},
+  year     = {2003},
+  file     = {Schmidhuber-2003-p-.pdf:FullText\\Schmidhuber-2003-p-.pdf:PDF},
+  groups   = {Seq2seq},
+  keywords = {rank3},
+  review   = {这个是个幻灯片，是文献 \cite{Hochreiter-1997-p1735-1780} 作者参与 2003 年会议制作的幻灯片，对文献 \cite{Hochreiter-1997-p1735-1780} 中介绍的 LSTM 进行进一步的阐述。},
+}
+
+@InProceedings{Vinyals-2015-p2773-2781,
+  author    = {Vinyals, Oriol and Kaiser, {\L}ukasz and Koo, Terry and Petrov, Slav and Sutskever, Ilya and Hinton, Geoffrey},
+  title     = {Grammar as a foreign language},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2015},
+  pages     = {2773--2781},
+  file      = {Vinyals-2015-p2773-2781.pdf:FullText\\Vinyals-2015-p2773-2781.pdf:PDF},
+  groups    = {Seq2seq},
+  keywords  = {rank3},
+  review    = {这篇文章也是介绍 LSTM 以及 Attention 机制，其中给出了计算 Attention 向量中的算法，算是对文献 \cite{Bahdanau-2014-p-} 的补充。},
+}
+
+@Misc{Shaohua-2016-p-,
+  author   = {Li Shaohua},
+  title    = {词嵌入原理},
+  month    = {Augest},
+  year     = {2016},
+  file     = {Shaohua-2016-p-.pdf:FullText\\Shaohua-2016-p-.pdf:PDF},
+  groups   = {词向量},
+  keywords = {rank4},
+  review   = {这篇文章是介绍词嵌入，也就是词向量原理的，讲的还是不错的，讲的比较清楚，从数学角度。},
+}
+
+@Article{Olah-2015-p-,
+  author   = {Olah, Christopher},
+  title    = {Understanding lstm networks},
+  journal  = {GITHUB blog, posted on August},
+  year     = {2015},
+  volume   = {27},
+  file     = {Olah-2015-p-.pdf:FullText\\Olah-2015-p-.pdf:PDF},
+  groups   = {Seq2seq},
+  keywords = {rank5},
+  review   = {这篇文章是网页 http://colah.github.io/posts/2015-08-Understanding-LSTMs/ 的 PDF 版。},
+}
+
+@Misc{Synonym-0000-p-,
+  title  = {《同义词词林(扩展版)》说明},
+  file   = {Synonym-0000-p-.pdf:FullText\\Synonym-0000-p-.pdf:PDF},
+  groups = {近义词},
+  review = {这篇文章是对《同义词词林(扩展版)》的具体说明。主要介绍《同义词词林(扩展版)》是以什么规则制定出来的。},
+}
+
+@Article{Jiule-2010-p602-608,
+  author  = {Tian Jiule and Zhao Wei},
+  title   = {基于同义词词林的词语相似度计算方法},
+  journal = {吉林大学学报: 信息科学版},
+  year    = {2010},
+  number  = {6},
+  pages   = {602--608},
+  file    = {Jiule-2010-p602-608.pdf:FullText\\Jiule-2010-p602-608.pdf:PDF},
+  groups  = {近义词},
+  review  = {这篇文章是介绍如何用《同义词词林(扩展版)》进行词语相似度计算的方法，
+
+这里有整篇文章提出算法的代码实现，用的是 Java 实现的。
+http://codepub.cn/2015/08/04/Based-on-the-extended-version-of-synonyms-Cilin-word-similarity-computing/},
+}
+
+@InProceedings{Fu-2014-p1199-1209,
+  author    = {Fu, Ruiji and Guo, Jiang and Qin, Bing and Che, Wanxiang and Wang, Haifeng and Liu, Ting},
+  title     = {Learning semantic hierarchies via word embeddings},
+  booktitle = {Proceedings of the 52nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
+  year      = {2014},
+  volume    = {1},
+  pages     = {1199--1209},
+  file      = {Fu-2014-p1199-1209.pdf:FullText\\Fu-2014-p1199-1209.pdf:PDF},
+  groups    = {近义词},
+  review    = {这个是利用 word2vec 进行上下位分析，想法很好。},
+}
+
+@Article{Hochreiter-1991-p-,
+  author  = {Hochreiter, Sepp},
+  title   = {Untersuchungen zu dynamischen neuronalen Netzen},
+  journal = {Diploma, Technische Universit{\"a}t M{\"u}nchen},
+  year    = {1991},
+  volume  = {91},
+  file    = {Hochreiter-1991-p-.pdf:FullText\\Hochreiter-1991-p-.pdf:PDF},
+  groups  = {Seq2seq},
+  review  = {这篇文章主要指出 RNN 不适合解决长期以来的问题。这个观点来自于 http://colah.github.io/posts/2015-08-Understanding-LSTMs/。
+
+非英文文章，没法看，只是作为参考文献使用。},
+}
+
+@Article{Bengio-1994-p157-166,
+  author    = {Bengio, Yoshua and Simard, Patrice and Frasconi, Paolo},
+  title     = {Learning long-term dependencies with gradient descent is difficult},
+  journal   = {IEEE transactions on neural networks},
+  year      = {1994},
+  volume    = {5},
+  number    = {2},
+  pages     = {157--166},
+  file      = {Bengio-1994-p157-166.pdf:FullText\\Bengio-1994-p157-166.pdf:PDF},
+  groups    = {Seq2seq},
+  publisher = {IEEE},
+  review    = {这篇文章跟 \cite{Hochreiter-1991-p-} 一样，都是用来证明 RNN 不适合解决长期以来的问题，观点来自于 http://colah.github.io/posts/2015-08-Understanding-LSTMs/。
+
+这篇文章我没看，只是拿来作为参考文献。},
+}
+
+@Article{Chopra-2016-p93-98,
+  author = {Chopra, Sumit and Auli, Michael and Rush, Alexander M},
+  title  = {Abstractive Sentence Summarization with Attentive Recurrent Neural Networks.},
+  year   = {2016},
+  pages  = {93--98},
+  file   = {Chopra-2016-p93-98.pdf:FullText\\Chopra-2016-p93-98.pdf:PDF},
+  groups = {Seq2seq},
+  review = {这篇讲 seq2seq 的 Decoder 很好，一下就能看懂。},
+}
+
+@Article{Sutskever-2014-p3104-3112,
+  author  = {Sutskever, Ilya and Vinyals, Oriol and Le, Quoc V},
+  title   = {Sequence to Sequence Learning with Neural Networks},
+  journal = {neural information processing systems},
+  year    = {2014},
+  pages   = {3104--3112},
+  file    = {Sutskever-2014-p3104-3112.pdf:FullText\\Sutskever-2014-p3104-3112.pdf:PDF},
+  groups  = {Seq2seq},
+}
+
+@Article{Cho-2014-p1724-1734,
+  author  = {Cho, Kyunghyun and Van Merrienboer, Bart and Gulcehre, Caglar and Bahdanau, Dzmitry and Bougares, Fethi and Schwenk, Holger and Bengio, Yoshua},
+  title   = {Learning Phrase Representations using RNN Encoder--Decoder for Statistical Machine Translation},
+  journal = {empirical methods in natural language processing},
+  year    = {2014},
+  pages   = {1724--1734},
+  file    = {Cho-2014-p1724-1734.pdf:FullText\\Cho-2014-p1724-1734.pdf:PDF},
+  groups  = {Seq2seq},
+}
+
+@Article{Luong-2015-p-,
+  author        = {Minh{-}Thang Luong and Hieu Pham and Christopher D. Manning},
+  title         = {Effective Approaches to Attention-based Neural Machine Translation},
+  journal       = {CoRR},
+  year          = {2015},
+  volume        = {abs/1508.04025},
+  archiveprefix = {arXiv},
+  bibsource     = {dblp computer science bibliography, http://dblp.org},
+  biburl        = {http://dblp.org/rec/bib/journals/corr/LuongPM15},
+  eprint        = {1508.04025},
+  file          = {Luong-2015-p-.pdf:FullText\\Luong-2015-p-.pdf:PDF},
+  groups        = {Seq2seq},
+  review        = {提出 Globalattentional model 和 Local attention model 两种 Attention 模型。},
+  timestamp     = {Wed, 07 Jun 2017 14:41:36 +0200},
+  url           = {http://arxiv.org/abs/1508.04025},
+}
+
+@Misc{None--p1-7,
+  author = {None},
+  title  = {基于Seq2Seq+Attention模型的Textsum文本自动摘要},
+  file   = {None--p1-7.pdf:FullText\\None--p1-7.pdf:PDF},
+  groups = {Seq2seq},
+  pages  = {1-7},
+  review = {这篇文章介绍 Attention 模型也很好，还介绍了 Soft Attention 和 Hard Attention 的概念。
+
+这篇文章是网络博客，原文地址为 http://www.deepnlp.org/blog/textsum-seq2seq-attention/},
+}
+
+@Article{Beltramelli-2017-p-,
+  author        = {Tony Beltramelli},
+  title         = {pix2code: Generating Code from a Graphical User Interface Screenshot},
+  journal       = {CoRR},
+  year          = {2017},
+  volume        = {abs/1705.07962},
+  archiveprefix = {arXiv},
+  bibsource     = {dblp computer science bibliography, http://dblp.org},
+  biburl        = {http://dblp.org/rec/bib/journals/corr/Beltramelli17},
+  eprint        = {1705.07962},
+  file          = {Beltramelli-2017-p-.pdf:FullText\\Beltramelli-2017-p-.pdf:PDF},
+  groups        = {代码生成},
+  review        = {pix2code，采用CNN获得图像的特征，利用RNN获得代码上下文关系，来预测新图片对应的代码。另外，这里用的代码不是目标代码，而是中间代码，DSL，也叫领域专用语言，其文本空间非常小，很利于RNN预测。
+
+目前常用的编程语言有很多，比如JAVA、C++、Python、PHP等，对于机器码农来说，也存在着：“PHP是不是最好的语言”这种问题，就是说需要作出应该用什么语言产生代码的决策。一般不同的深度学习自动编码系统都会参考“领域特定语言（Domain Specific Language）”自己定义一种编程语言，而不是直接采用人类程序员常用的某种编程语言，这是因为对于机器产生代码来说，目前常用的编程语言过于复杂，里面包含了循环、分支判断等复杂控制逻辑，而根据“领域特定语言”定义的语言一般都比较简单，不包含这些控制逻辑，只包含一些基本原语，比如数值加一、数值减一、移动指针位置、读取某存储器内数据、将数据写入存储器某位置等基本操作原语。所有代码片段（包括训练数据对应的程序以及将来要生成的代码）都采用自定义的领域特定语言，这样会大大简化机器码农的学习难度。},
+  timestamp     = {Wed, 07 Jun 2017 14:42:16 +0200},
+  url           = {http://arxiv.org/abs/1705.07962},
+}
+
+@Article{Becker-2017-p-,
+  author        = {Kory Becker and Justin Gottschlich},
+  title         = {{AI} Programmer: Autonomously Creating Software Programs Using Genetic Algorithms},
+  journal       = {CoRR},
+  year          = {2017},
+  volume        = {abs/1709.05703},
+  archiveprefix = {arXiv},
+  bibsource     = {dblp computer science bibliography, http://dblp.org},
+  biburl        = {http://dblp.org/rec/bib/journals/corr/abs-1709-05703},
+  eprint        = {1709.05703},
+  file          = {Becker-2017-p-.pdf:FullText\\Becker-2017-p-.pdf:PDF},
+  groups        = {代码生成},
+  review        = {这个是利于遗传算法生成BF代码，BF代码的特点是文本空间低，只有8个操作。方便遗传算法搜索。其思路跟DeepCoder类似，给定输出输出，可以理解为单元测试。然后遗传算法生成代码，并进行单元测试，直到产生一段代码满足单元测试。},
+  timestamp     = {Thu, 05 Oct 2017 09:42:58 +0200},
+  url           = {http://arxiv.org/abs/1709.05703},
+}
+
+@Article{Balog-2016-p-,
+  author        = {Matej Balog and Alexander L. Gaunt and Marc Brockschmidt and Sebastian Nowozin and Daniel Tarlow},
+  title         = {DeepCoder: Learning to Write Programs},
+  journal       = {CoRR},
+  year          = {2016},
+  volume        = {abs/1611.01989},
+  archiveprefix = {arXiv},
+  bibsource     = {dblp computer science bibliography, http://dblp.org},
+  biburl        = {http://dblp.org/rec/bib/journals/corr/BalogGBNT16},
+  eprint        = {1611.01989},
+  file          = {Balog-2016-p-.pdf:FullText\\Balog-2016-p-.pdf:PDF},
+  groups        = {代码生成},
+  review        = {跟AI Programmer 很像，不过，这里用机器学习算法对单元测试进行分析，提取特征，预测可能用到的函数，从而降低搜索算法的搜索空间。},
+  timestamp     = {Wed, 07 Jun 2017 14:43:01 +0200},
+  url           = {http://arxiv.org/abs/1611.01989},
+}
+
+@Article{Ling-2016-p-,
+  author        = {Wang Ling and Edward Grefenstette and Karl Moritz Hermann and Tom{\'{a}}s Kocisk{\'{y}} and Andrew Senior and Fumin Wang and Phil Blunsom},
+  title         = {Latent Predictor Networks for Code Generation},
+  journal       = {CoRR},
+  year          = {2016},
+  volume        = {abs/1603.06744},
+  archiveprefix = {arXiv},
+  bibsource     = {dblp computer science bibliography, http://dblp.org},
+  biburl        = {http://dblp.org/rec/bib/journals/corr/LingGHKSWB16},
+  eprint        = {1603.06744},
+  file          = {Ling-2016-p-.pdf:FullText\\Ling-2016-p-.pdf:PDF},
+  groups        = {代码生成},
+  review        = {这篇文章是利用双向RNN，根据炉石卡片上的描述，生成响应的代码，比较接近我们的业务诉求。},
+  timestamp     = {Wed, 07 Jun 2017 14:42:28 +0200},
+  url           = {http://arxiv.org/abs/1603.06744},
+}
+
+@Article{Sethi-2017-p-,
+  author  = {Sethi, Akshay and Sankaran, Anush and Panwar, Naveen and Khare, Shreya and Mani, Senthil},
+  title   = {DLPaper2Code: Auto-generation of Code from Deep Learning Research Papers},
+  journal = {arXiv preprint arXiv:1711.03543},
+  year    = {2017},
+  file    = {Sethi-2017-p-.pdf:FullText\\Sethi-2017-p-.pdf:PDF},
+  groups  = {代码生成},
+}
+
+@Article{Shan-2009-p571-588,
+  author    = {Shan, Lijun and Zhu, Hong},
+  title     = {Generating structurally complex test cases by data mutation: A case study of testing an automated modelling tool},
+  journal   = {The Computer Journal},
+  year      = {2009},
+  volume    = {52},
+  number    = {5},
+  pages     = {571--588},
+  file      = {Shan-2009-p571-588.pdf:FullText\\Shan-2009-p571-588.pdf:PDF},
+  groups    = {Prof. Zhu},
+  publisher = {OUP},
+  review    = {测试数据变异方法及其测试工具，这是一种测试数据自动生成的方法},
+}
+
+@InProceedings{Zhu-2015-p8-15,
+  author       = {Zhu, Hong},
+  title        = {Jfuzz: A tool for automated java unit testing based on data mutation and metamorphic testing methods},
+  booktitle    = {Trustworthy Systems and Their Applications (TSA), 2015 Second International Conference on},
+  year         = {2015},
+  pages        = {8--15},
+  organization = {IEEE},
+  file         = {Zhu-2015-p8-15.pdf:FullText\\Zhu-2015-p8-15.pdf:PDF},
+  groups       = {Prof. Zhu},
+  review       = {测试数据变异方法及其测试工具，这是一种测试数据自动生成的方法},
+}
+
+@InProceedings{Yu-2008-p190-199,
+  author       = {Yu, Bo and Kong, Liang and Zhang, Yufeng and Zhu, Hong},
+  title        = {Testing java components based on algebraic specifications},
+  booktitle    = {Software Testing, Verification, and Validation, 2008 1st International Conference on},
+  year         = {2008},
+  pages        = {190--199},
+  organization = {IEEE},
+  file         = {Yu-2008-p190-199.pdf:FullText\\Yu-2008-p190-199.pdf:PDF},
+  groups       = {Prof. Zhu},
+  review       = {基于代数规约的自动测试，其中对Java EE构件（JBoss）的测试工作比较成熟一些，对服务的测试还有待进一步的研究},
+}
+
+@InProceedings{Liu-2016-p24-33,
+  author       = {Liu, Dongmei and Wu, Xian and Zhang, Xin and Zhu, Hong and Bayley, Ian},
+  title        = {Monic Testing of Web Services Based on Algebraic Specifications},
+  booktitle    = {Service-Oriented System Engineering (SOSE), 2016 IEEE Symposium on},
+  year         = {2016},
+  pages        = {24--33},
+  organization = {IEEE},
+  file         = {Liu-2016-p24-33.pdf:FullText\\Liu-2016-p24-33.pdf:PDF},
+  groups       = {Prof. Zhu},
+  review       = {基于代数规约的自动测试，其中对Java EE构件（JBoss）的测试工作比较成熟一些，对服务的测试还有待进一步的研究},
+}
+
+@Article{Zhu-2010-p116-130,
+  author   = {H. Zhu and Y. Zhang},
+  title    = {Collaborative Testing of Web Services},
+  journal  = {IEEE Transactions on Services Computing},
+  year     = {2010},
+  volume   = {5},
+  pages    = {116-130},
+  month    = {12},
+  issn     = {1939-1374},
+  doi      = {10.1109/TSC.2010.54},
+  file     = {Zhu-2010-p116-130.pdf:FullText\\Zhu-2010-p116-130.pdf:PDF},
+  groups   = {Prof. Zhu},
+  keywords = {Software engineering; software testing; distributed/internet based software engineering tools and techniques; testing tools; ontology; web services; semantic web services; service composition.},
+  review   = {测试服务(TaaS)的组合},
+  url      = {doi.ieeecomputersociety.org/10.1109/TSC.2010.54},
+}
+
+@InCollection{Zhu-2014-p171-197,
+  author    = {Zhu, Hong and Zhang, Yufeng},
+  title     = {A Test Automation Framework for Collaborative Testing of Web Service Dynamic Compositions},
+  booktitle = {Advanced Web Services},
+  publisher = {Springer},
+  year      = {2014},
+  pages     = {171--197},
+  file      = {Zhu-2014-p171-197.pdf:FullText\\Zhu-2014-p171-197.pdf:PDF},
+  groups    = {Prof. Zhu},
+  review    = {测试服务(TaaS)的组合},
+}
+
+@Article{Lample-2016-p-,
+  author  = {Lample, Guillaume and Ballesteros, Miguel and Subramanian, Sandeep and Kawakami, Kazuya and Dyer, Chris},
+  title   = {Neural architectures for named entity recognition},
+  journal = {arXiv preprint arXiv:1603.01360},
+  year    = {2016},
+  groups  = {introduction_of_testcasebot},
+}
+
+@Article{Wang-2015-p-,
+  author  = {Wang, Peilu and Qian, Yao and Soong, Frank K and He, Lei and Zhao, Hai},
+  title   = {Part-of-speech tagging with bidirectional long short-term memory recurrent neural network},
+  journal = {arXiv preprint arXiv:1510.06168},
+  year    = {2015},
+  groups  = {introduction_of_testcasebot},
+}
+
+@InProceedings{Lai-2015-p2267-2273,
+  author    = {Lai, Siwei and Xu, Liheng and Liu, Kang and Zhao, Jun},
+  title     = {Recurrent Convolutional Neural Networks for Text Classification.},
+  booktitle = {AAAI},
+  year      = {2015},
+  volume    = {333},
+  pages     = {2267--2273},
+  groups    = {introduction_of_testcasebot},
+}
+
+@Article{Yih-2015-p-,
+  author = {Yih, Scott Wen-tau and Chang, Ming-Wei and He, Xiaodong and Gao, Jianfeng},
+  title  = {Semantic parsing via staged query graph generation: Question answering with knowledge base},
+  year   = {2015},
+  groups = {introduction_of_testcasebot},
+}
+
+@InProceedings{Bogdanova-2015-p123-131,
+  author    = {Bogdanova, Dasha and dos Santos, Cicero and Barbosa, Luciano and Zadrozny, Bianca},
+  title     = {Detecting semantically equivalent questions in online user forums},
+  booktitle = {Proceedings of the Nineteenth Conference on Computational Natural Language Learning},
+  year      = {2015},
+  pages     = {123--131},
+  groups    = {introduction_of_testcasebot},
+}
+
+@Article{Wolk-2015-p2-9,
+  author    = {Wo{\l}k, Krzysztof and Marasek, Krzysztof},
+  title     = {Neural-based machine translation for medical text domain. Based on European Medicines Agency leaflet texts},
+  journal   = {Procedia Computer Science},
+  year      = {2015},
+  volume    = {64},
+  pages     = {2--9},
+  groups    = {introduction_of_testcasebot},
+  publisher = {Elsevier},
+}
+
+@Article{Abdel-Hamid-2014-p1533-1545,
+  author    = {Abdel-Hamid, Ossama and Mohamed, Abdel-rahman and Jiang, Hui and Deng, Li and Penn, Gerald and Yu, Dong},
+  title     = {Convolutional neural networks for speech recognition},
+  journal   = {IEEE/ACM Transactions on audio, speech, and language processing},
+  year      = {2014},
+  volume    = {22},
+  number    = {10},
+  pages     = {1533--1545},
+  groups    = {introduction_of_testcasebot},
+  publisher = {IEEE},
+}
+
+@Article{Sharma-2013-p662-667,
+  author  = {Sharma, Ankit and Chaudhary, Dipti R},
+  title   = {Character recognition using neural network},
+  journal = {International Journal of Engineering Trends and Technology (IJETT)-Volume4},
+  year    = {2013},
+  pages   = {662--667},
+  groups  = {introduction_of_testcasebot},
+}
+
+@Article{Garaas-p1-1,
+  author = {Garaas, Tyler and Xiao, Mei and Pomplun, Marc},
+  title  = {Personalized Spell Checking using Neural Networks},
+  pages  = {1},
+  groups = {introduction_of_testcasebot},
+}
+
+@Article{Goldberg-2014-p-a,
+  author  = {Goldberg, Yoav and Levy, Omer},
+  title   = {word2vec Explained: deriving Mikolov et al.'s negative-sampling word-embedding method},
+  journal = {arXiv preprint arXiv:1402.3722},
+  year    = {2014},
+  groups  = {introduction_of_testcasebot},
+}
+
+@Book{Gilks-1995-p-,
+  title     = {Markov chain Monte Carlo in practice},
+  publisher = {CRC press},
+  year      = {1995},
+  author    = {Gilks, Walter R and Richardson, Sylvia and Spiegelhalter, David},
+  groups    = {introduction_of_testcasebot},
+}
+
+@Book{Jensen-1996-p-,
+  title     = {An introduction to Bayesian networks},
+  publisher = {UCL press London},
+  year      = {1996},
+  author    = {Jensen, Finn V},
+  volume    = {210},
+  groups    = {introduction_of_testcasebot},
+}
+
+@Book{zhanglianwen-2006-p-,
+  title     = {贝叶斯网引论},
+  publisher = {科学出版社},
+  year      = {2006},
+  author    = {张连文 and 郭海鹏},
+  volume    = {11},
+  groups    = {introduction_of_testcasebot},
+}
+
+@Article{Huang-1996-p225-264,
+  author    = {Huang, Cecil and Darwiche, Adnan},
+  title     = {Inference in belief networks: A procedural guide},
+  journal   = {International journal of approximate reasoning},
+  year      = {1996},
+  volume    = {15},
+  number    = {3},
+  pages     = {225--264},
+  groups    = {introduction_of_testcasebot},
+  publisher = {[New York, NY]: North-Holland, c1987-},
+}
+
+@Article{Cooper-1990-p393-405,
+  author    = {Cooper, Gregory F},
+  title     = {The computational complexity of probabilistic inference using Bayesian belief networks},
+  journal   = {Artificial intelligence},
+  year      = {1990},
+  volume    = {42},
+  number    = {2-3},
+  pages     = {393--405},
+  groups    = {introduction_of_testcasebot},
+  publisher = {Elsevier},
+}
+
+@Book{Pearl-2014-p-,
+  title     = {Probabilistic reasoning in intelligent systems: networks of plausible inference},
+  publisher = {Elsevier},
+  year      = {2014},
+  author    = {Pearl, Judea},
+  groups    = {introduction_of_testcasebot},
+}
+
+@Article{Heskes-2004-p2379-2413,
+  author    = {Heskes, Tom},
+  title     = {On the uniqueness of loopy belief propagation fixed points},
+  journal   = {Neural Computation},
+  year      = {2004},
+  volume    = {16},
+  number    = {11},
+  pages     = {2379--2413},
+  groups    = {introduction_of_testcasebot},
+  publisher = {MIT Press},
+}
+
+@Article{Felzenszwalb-2006-p41-54,
+  author    = {Felzenszwalb, Pedro F and Huttenlocher, Daniel P},
+  title     = {Efficient belief propagation for early vision},
+  journal   = {International journal of computer vision},
+  year      = {2006},
+  volume    = {70},
+  number    = {1},
+  pages     = {41--54},
+  groups    = {introduction_of_testcasebot},
+  publisher = {Springer},
+}
+
+@Article{Sun-2003-p787-800,
+  author    = {Sun, Jian and Zheng, Nan-Ning and Shum, Heung-Yeung},
+  title     = {Stereo matching using belief propagation},
+  journal   = {IEEE Transactions on pattern analysis and machine intelligence},
+  year      = {2003},
+  volume    = {25},
+  number    = {7},
+  pages     = {787--800},
+  groups    = {introduction_of_testcasebot},
+  publisher = {IEEE},
+}
+
+@Article{McEliece-1998-p140-152,
+  author    = {McEliece, Robert J. and MacKay, David J. C. and Cheng, Jung-Fu},
+  title     = {Turbo decoding as an instance of Pearl's" belief propagation" algorithm},
+  journal   = {IEEE Journal on selected areas in communications},
+  year      = {1998},
+  volume    = {16},
+  number    = {2},
+  pages     = {140--152},
+  groups    = {introduction_of_testcasebot},
+  publisher = {IEEE},
+}
+
+@Comment{jabref-meta: databaseType:bibtex;}
+
+@Comment{jabref-meta: groupstree:
+0 AllEntriesGroup:;
+1 ExplicitGroup:词向量\;0\;;
+1 ExplicitGroup:Seq2seq\;0\;;
+1 ExplicitGroup:近义词\;0\;;
+1 ExplicitGroup:代码生成\;0\;;
+1 ExplicitGroup:Prof. Zhu\;0\;;
+1 ExplicitGroup:introduction_of_testcasebot\;0\;;
 }

@@ -1,0 +1,16 @@
+\begin{tikzpicture}
+  \decodernode{};
+
+  \draw[flow, -] (decoder-mt-1) -- ++(180:1cm) node[midway, above] {$\vec{n}_{t-1}$};
+  \draw[flow, -] (decoder-ht-1) -- ++(180:1cm) node[midway, above] {$\vec{s}_{t-1}$};
+  \draw[flow]    (decoder-mt)   -- ++(0:1cm) node[midway, above] {$\vec{n}_{t}$};
+  \draw[flow]    (decoder-ht)   -- ++(0:1cm) node[midway, above] {$\vec{s}_{t}$};
+  \draw[flow]    (decoder-yt)   -- ++(90:0.5cm) node[output, anchor = south] {$\vec{y}_{t}$};
+  \draw[flow, -] (decoder-yt-1) -- ++(-90:0.5cm) node[input, anchor = north] {$\vec{y}'_{t-1}$};
+  \draw[flow, -] (decoder-ct) -- ++(-90:0.5cm) node[input, anchor = north] {$\vec{c}$};
+
+  \path (decoder-fg) -- (decoder-times1) node[midway, left] {$\vec{f}_t$};
+  \path (decoder-tanh) |- (decoder-times2) node[midway, left] {$\vec{i}_t$};
+  \path (decoder-ig) -- (decoder-times2) node[midway, left] {$\vec{n}'_t$};
+  \path (decoder-og) -- (decoder-times3) node[midway, left] {$\vec{o}_t$};
+\end{tikzpicture}

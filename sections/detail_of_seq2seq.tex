@@ -1,0 +1,179 @@
+%!TEX root = ../Main.tex
+
+\section{\ss{} 详细介绍}
+\subsection{\ss{} 简介}
+\indent\ss{} 技术，全称 Sequence to Sequence，该技术突破了传统的固定大小输入问题框架，开通了将经典深度神经网络模型运用于翻译与智能问答这一类序列型任务的先河，并被证实在英语\raisebox{1pt}{$\Leftrightarrow$}法语翻译、英语\raisebox{1pt}{$\Leftrightarrow$}德语翻译以及人机短问快答的应用中有着不俗的表现．
+
+\ss{} 于 2014 年被提出，最早由两篇文章独立地阐述了它主要思想，分别是 Google Brain 团队的 Ilya Sutskever \cite{Sutskever-2014-p3104-3112} 等人和 Yoshua Bengio 团队的 Kyunghyun Cho \cite{Cho-2014-p1724-1734} 等人．这两篇文章针对机器翻译的问题不谋而合地提出了相似的解决思路，\ss{} 由此产生．
+
+\subsection{\ss{} 核心思想}
+\label{sec:Main Idea of Seq2seq}
+\indent\ss{} 解决问题的主要思路是通过 \lstm{} 模型，将一个作为输入的序列映射为一个作为输出的序列，这一过程由编码输入与解码输出两个环节组成，如\cref{fig:Principle of Seq2seq} 所示．%
+%
+\begin{figure}[!htb]
+  \centering
+  \scalebox{0.7}{\input{./figures/principle_of_seq2seq}}
+  \caption{\ss{} 工作原理}
+  \label{fig:Principle of Seq2seq}
+\end{figure}%
+%
+由\cref{fig:Principle of Seq2seq} 可以看出，该 \ss{} 的作用是将 \inlinetext{ABC} 翻译成 \inlinetext{XYZ}．首选，\ss{} 利用 Encoder 对文本 $\inlinetext{ABC}$ 进行编码，获得上下文向量 $\vec{c}$，然后将 $\vec{c}$ 送入 Decoder 中，进行翻译．翻译的过程是以 \inlinetext{SOS} 符号开始的，其含义为 \inlinetext{Start of Sentence}，接下来 Decoder 会计算第一个词 \inlinetext{X} 然后，根据第一个词 $\inlinetext{X}$ 计算第二个词 \inlinetext{Y}，一直循环下去，直至计算出符号 \inlinetext{EOS}，其含义为 \inlinetext{End of Sentence}，结束预测，翻译结果为 $\inlinetext{XYZ}$．
+
+\subsection{\ss{} 内部结构}
+\label{sec:Inner Structure of Seq2seq}
+由\cref{sec:Main Idea of Seq2seq}可知，\ss{} 的工作原理是利用 Encoder 对待翻译的文本进行编码得到上下文向量，然后利用 Decoder 根据上下文向量得到对应的文本．也就是通过 Encoder 和 Decoder，利用上下文向量建立文本和文本之间的映射关系．本小节就从 Encoder 和 Decoder 两个角度阐述 \ss{} 的内部结构．
+
+\subsubsection{\ss{} 的 Encoder}
+\indent\ss{} 的 Encoder 利用 \lstm{} 对文本进行编码，得到上下文向量 $\vec{c}$，Encoder 的结构如\cref{fig:Inner Structure of Encoder} 所示．%
+%
+\begin{figure}[!htb]
+  \centering
+  \scalebox{0.6}{\input{./figures/inner_structure_of_encoder}}
+  \caption{\ss{} 中 Encoder 的内部结构}
+  \label{fig:Inner Structure of Encoder}
+\end{figure}%
+%
+\cref{fig:Inner Structure of Encoder} 中，输入文本，也就是待翻译的文本为 $\vec{x} = (\vec{x}_1, \vec{x}_2, \cdots, \vec{x}_{\ell(i)})$，其中 $\ell(i)$ 是输入文本中最小单位的数量，$\vec{x}_j$ 是输入文本中第 $j\in[1, \ell(i)]$ 个最小单位的特征向量．在一般的自然文本处理中，文本的最小单文是词语，而特征向量一般采用词嵌入技术来获得，也就是所谓的词向量．$\vec{m}$ 的作用是使神经网络具有保存记忆的功能，起到的是辅助的作用，我们最终只会利用向量 $\vec{h}$ 去计算上下文向量 $\vec{c}$，即%
+%
+\begin{equation}\label{eqn:Calculation of Context Vector}
+  \vec{c} = \varphi(\vec{h}_1, \vec{h}_2, \cdots, \vec{h}_{\ell(i)})\text{．}
+\end{equation}%
+%
+函数 $\varphi(\,\cdot\,)$ 的定义如\cref{eqn:Definition of Function Phi} 所示．%
+%
+\begin{equation}\label{eqn:Definition of Function Phi}
+  \varphi(\vec{h}_1, \vec{h}_2, \cdots, \vec{h}_{\ell(i)}) = \vec{h}_{\ell(i)}\text{．}
+\end{equation}%
+%
+综合\cref{eqn:Calculation of Context Vector} 和\cref{eqn:Definition of Function Phi} 可知，对于 \ss{} 来说，其上下文向量 $\vec{c} = \vec{h}_{\ell(i)}$．下面结合 Encoder 的其中的第 $t$ 个节点来说明向量 $\vec{h}_t$ 的计算过程．Encoder 第 $t$ 个节点的结构如\cref{fig:Inner Structure of Encoder Node} 所示，%
+%
+\begin{figure}[!htb]
+  \centering
+  \scalebox{0.7}{\input{./figures/inner_structure_of_encoder_node}}
+  \caption{Encoder 第 $t$ 个节点的结构}
+  \label{fig:Inner Structure of Encoder Node}
+\end{figure}%
+%
+假设输入文本所有最小单位的特征向量 $\vec{x}_t\in\mathbb{R}^{\ell(i)\times 1}$，向量 $\vec{h}_t\in\mathbb{R}^{\ell(c)\times 1}$，向量 $\vec{m}\in\mathbb{R}^{\ell(c)\times 1}$．则根据\cref{fig:Inner Structure of Encoder Node} 可以得出向量 $\vec{m}$ 的计算公式，如\cref{eqn:Calcultion of Encoder Vector ft}、\cref{eqn:Calcultion of Encoder Vector it}、\cref{eqn:Calcultion of Encoder Vector mt'} 和\cref{eqn:Calcultion of Encoder Vector mt} 所示．%
+%
+\begin{align}
+  \label{eqn:Calcultion of Encoder Vector ft}
+  \vec{f}_t &= \sigma\big(\bm{W}_f[\vec{h}_{t-1};\vec{x}_t] + \vec{b}_f\big)\text{，}\\
+  \label{eqn:Calcultion of Encoder Vector it}
+  \vec{i}_t  &= \sigma\big(\bm{W}_i[\vec{h}_{t-1};\vec{x}_t] + \vec{b}_i\big)\text{，}\\
+  \label{eqn:Calcultion of Encoder Vector mt'}
+  \vec{m}'_t &= \tanh\big(\bm{W}_m[\vec{h}_{t-1};\vec{x}_t] + \vec{b}_m\big)\text{，}\\
+  \label{eqn:Calcultion of Encoder Vector mt}
+  \vec{m}_t &= \vec{f}_i\cdot\vec{m}_{t-1} + \vec{i}_t\cdot\vec{m}'_t\text{．}\\
+\intertext{有了记忆向量 $\vec{m}_t$，便可以计算向量 $\vec{h}_t$，计算公式如\cref{eqn:Calcultion of Encoder Vector ot} 和\cref{eqn:Calcultion of Encoder Vector ht} 所示．}
+  \label{eqn:Calcultion of Encoder Vector ot}
+  \vec{o}_t &= \sigma\big(\bm{W}_o[\vec{h}_{t-1};\vec{x}_t] + \vec{b}_o\big)\text{，}\\
+  \label{eqn:Calcultion of Encoder Vector ht}
+  \vec{h}_t &= \vec{o}_t\cdot\tanh(\vec{m}_t)\text{．}
+\end{align}%
+%
+其中，矩阵 $\bm{W}_f$、$\bm{W}_i$、$\bm{W}_m$ 和 $\bm{W}_o$ 均为权重矩阵，并且 $\forall \bm{W} \in \{\bm{W}_f, \bm{W}_i, \bm{W}_m, \bm{W}_o\}$ 都满足 $\bm{W}\in\mathbb{R}^{\ell(c)\times[\ell(i)+\ell(c)]}$；向量 $\vec{b}_f$、$\vec{b}_i$、$\vec{b}_m$ 和 $\vec{b}_o$ 均为偏置向量，且 $\forall \vec{b} \in \{\vec{b}_f, \vec{b}_i, \vec{b}_m, \vec{b}_o\}$ 都满足 $\vec{b}\in\mathbb{R}^{\ell(c)\times 1}$．权重矩阵 $\bm{W}_f$、$\bm{W}_i$、$\bm{W}_m$、$\bm{W}_o$ 和偏置向量 $\vec{b}_f$、$\vec{b}_i$、$\vec{b}_m$、$\vec{b}_o$ 均由训练获得．
+
+文本 $\vec{x}$ 经过 Encoder 编码后，得到的上下文向量为 $\vec{c} = \vec{h}_{\ell(i)}$．至此，Encoder 的工作已经完成，Encoder 会将上下文向量 $\vec{c}$ 送给 Decoder 进行接下来的工作．
+
+\subsubsection{\ss{} 的 Decoder}
+\label{eqn:Decoder of Seq2seq}
+\indent\ss{} 的 Decoder 利用 LSTM 对输入文本 $\vec{x}$ 对应的上下文 $\vec{c}$ 进行解码，获得与输入文本 $\vec{x}$ 对应的文本 $\vec{y} = (\vec{y}_1, \vec{y}_2, \cdots, \vec{y}_{\ell(o)})$，其中 $\ell(o)$ 是输出文本中最小单位数量，$\vec{y}_j$ 是输出文本中第 $j\in[1, \ell(o)]$ 个最小单位的特征向量，与输入文本一样，输出文本的最小单位也是词语，而特征向量不是词向量，而是词语的 \inlinetext{one-hot} 编码．这样我们就能从 Decoder 的输出向量 $\vec{y} = (\vec{y}_1, \vec{y}_2, \cdots, \vec{y}_{\ell(o)}, \text{\tt EOS})$ 中还原与输入文本 $\vec{x}$ 对应的文本．Encoder 的结构如\cref{fig:Inner Structure of Decoder} 所示．%
+%
+\begin{figure}[!htb]
+  \centering
+  \scalebox{0.6}{\input{./figures/inner_structure_of_decoder}}
+  \caption{Decoder 内部结构}
+  \label{fig:Inner Structure of Decoder}
+\end{figure}%
+%
+由\cref{fig:Inner Structure of Decoder} 可以看出，对于第 $t$ 个 Decoder 节点，其输入是来自上一个节点，即第 $t-1$ 个节点的所有输出．具体来说，第 $t-1$ 个节点的输出 $\vec{n}_{t-1}$、$\vec{s}_{t-1}$ 和 $\vec{y}_{t-1}$ 都是第 $t$ 个节点的输入．第 $t$ 个节点在推理的时候，还需要上下文向量 $\vec{c}$．Decoder 第 $t$ 个节点的结构图如\cref{fig:Inner Structure of Decoder Node} 所示．%
+%
+\begin{figure}[!htb]
+  \centering
+  \scalebox{0.7}{\input{./figures/inner_structure_of_decoder_node}}
+  \caption{Decoder 第 $t$ 个节点的结构}
+  \label{fig:Inner Structure of Decoder Node}
+\end{figure}%
+%
+假设输出文本最小单位的特征向量 $\vec{y}_t\in\mathbb{R}^{\ell(y)\times 1}$，向量 $\vec{s}_t\in\mathbb{R}^{\ell(s)\times 1}$，向量 $\vec{n}_t\in\mathbb{R}^{\ell(s)\times 1}$，输出文本的语义空间大小为 $\ell(v)$．则根据\cref{fig:Inner Structure of Decoder} 可以得出 $\vec{n}_t$ 的计算公式，如\cref{eqn:Calcultion of Decoder Vector ft}、\cref{eqn:Calcultion of Decoder Vector it}、\cref{eqn:Calcultion of Decoder Vector mt'} 和 \cref{eqn:Calcultion of Decoder Vector mt} 所示．%
+%
+\begin{align}
+  \label{eqn:Calcultion of Decoder Vector ft}
+  \vec{f}_t &= \sigma\big(\bm{W}'_f[\vec{s}_{t-1};\vec{c}; \varepsilon(\vec{y}_{t-1})] + \vec{b}'_f\big)\text{，}\\
+  \label{eqn:Calcultion of Decoder Vector it}
+  \vec{i}_t &= \tanh\big(\bm{W}'_i[\vec{s}_{t-1};\vec{c}; \varepsilon(\vec{y}_{t-1})] + \vec{b}'_i\big)\text{，}\\
+  \label{eqn:Calcultion of Decoder Vector mt'}
+  \vec{n}'_t &= \sigma\big(\bm{W}'_m[\vec{s}_{t-1};\vec{c}; \varepsilon(\vec{y}_{t-1})] + \vec{b}'_m\big)\text{，}\\
+  \label{eqn:Calcultion of Decoder Vector mt}
+  \vec{n}_t &= \vec{n}'_t\cdot\vec{i}_t + \vec{n}_{t-1}\cdot\vec{f}_t\text{，}\\
+\intertext{其中，函数 $\varepsilon(\vec{y}_{t-1})$ 的作用是获得向量 $\vec{y}_{t-1}$ 中最大分量所对应单词的词向量．有了向量 $\vec{n}_t$ 便可以计算出向量 $\vec{s}_t$，以供下一轮迭代使用，向量 $\vec{s}_t$ 的计算公式如\cref{eqn:Calcultion of Decoder Vector ot} 和\cref{eqn:Calcultion of Decoder Vector ht} 所示．}
+  \label{eqn:Calcultion of Decoder Vector ot}
+  \vec{o}_t &= \sigma\big(\bm{W}'_o[\vec{s}_{t-1};\vec{c}; \varepsilon(\vec{y}_{t-1})] + \vec{b}'_o\big)\text{，}\\
+  \label{eqn:Calcultion of Decoder Vector ht}
+  \vec{s}_t &= \vec{n}_t\cdot\vec{o}_t\text{．}\\
+\intertext{最后，计算节点的输出向量 $\vec{y}_t$，如\cref{eqn:Calcultion of Decoder Vector yt} 所示．}
+  \label{eqn:Calcultion of Decoder Vector yt}
+  \vec{y}_t &= \rho\big(\bm{W}'_y[\vec{s}_{t-1};\vec{c}\,] + \vec{b}'_y\big)\text{，}
+\end{align}%
+%
+其中，矩阵 $\bm{W}'_f$、$\bm{W}'_i$、$\bm{W}'_m$、$\bm{W}'_o$ 和 $\bm{W}'_y$ 均为权重矩阵，并且 $\forall \bm{W}\in\{\bm{W}'_f, \bm{W}'_i, \bm{W}'_m, \bm{W}'_o\}$ 都满足 $\bm{W}\in\mathbb{R}^{\ell(s)\times[\ell(s)+\ell(c)+\ell(y)]}$，$\bm{W}'_y\in\mathbb{R}^{\ell(v)\times[\ell(s)+\ell(c)]}$；向量 $\vec{b}'_f$、$\vec{b}'_i$、$\vec{b}'_m$、$\vec{b}'_o$ 和 $\vec{b}'_y$ 均为偏置向量，且 $\forall \vec{b}\in\{\vec{b}'_f, \vec{b}'_i, \vec{b}'_m, \vec{b}'_o\}$ 都满足 $\vec{b}\in\mathbb{R}^{\ell(s)\times 1}$，$\vec{b}'_y\in\mathbb{R}^{\ell(v)\times 1}$．根据文献 \cite{Chopra-2016-p93-98}，权重矩阵 $\bm{W}'_f$、$\bm{W}'_i$、$\bm{W}'_m$、$\bm{W}'_o$ 和 $\bm{W}'_y$ 由训练获得，偏置向量 $\vec{b}'_f$、$\vec{b}'_i$、$\vec{b}'_m$ 和 $\vec{b}'_o$ 的值均为 $\vec{0}$．\cref{eqn:Calcultion of Decoder Vector yt} 中的函数 $\rho(\,\cdot\,)$ 是 Softmax 函数，其定义如\cref{eqn:Definition of Function Softmax} 所示．%
+%
+\begin{equation}\label{eqn:Definition of Function Softmax}
+  \rho(\vec{x}) = \frac{\exp(\vec{x})}{\sum_{x\in\vec{x}} \exp(x)}\text{．}
+\end{equation}
+
+\subsection{\ss{} 的 Attention 机制}
+\cref{sec:Inner Structure of Seq2seq} 中描述的 \ss{} 存在一个问题，无论输入的文本 $\vec{x}$ 有多长，它都会被 Encoder 压缩成一个固定长度的上下文向量 $\vec{c}$．因为，向量 $\vec{c}$ 的长度固定，不可能保存特别多的上下文信息，当输入本文非常长的时候，\ss{} 的预测效果便很不理想．为了解决这个问题，Dzmitry Bahdanau 等人在 2014 年提出了 Attention 机制\cite{Bahdanau-2014-p-}，很好的解决了 \ss{} 存在的这个问题．
+
+\ss{} 的主要想法是针对 Decoder 预测的不同阶段，利用 Attention 模型动态的生成针对这个阶段的上下文向量，比如在第 $t$ 个阶段，Decoder 根据第 $t$ 个词去预测第 $t+1$ 个词的时候，Attention 模型会计算更有针对性的上下文向量 $\vec{c}_t$ 去代替 $\vec{c}$．当 Attention 模型计算第 $t$ 个 Decoder 需要的上下文向量 $\vec{c}_t$ 时，需要 $t-1$ 时刻的 Decoder 的输出 $\vec{s}_{t-1}$
+
+在 $t$ 时刻，也就是 Decoder 利用 $t-1$ 时刻的输出 $\vec{y}_{t-1}$、$\vec{n}_{t-1}$、$\vec{s}_{t-1}$ 以及当前时刻的上下文向量 $\vec{c}_t$ 计算输出文本的第 $t$ 个词 $\vec{y}_t$，以及供 $t+1$ 时刻推理用的 $\vec{n}_{t}$、$\vec{s}_{t}$．这里上下文向量 $\vec{c}_t$ 也满足 $\vec{c}_t\in\mathbb{R}^{1\times\ell(c)}$，与\cref{eqn:Decoder of Seq2seq} 中提到的上下文向量 $\vec{c}$ 功能是一样的，只不过在有 Attention 机制存在的情况下，$t$ 时刻的上下文向量 $\vec{c}_t$ 不是固定不变的，而是由 Attention 模型计算出来的．其计算过程如\cref{fig:Calculation of Context Vector at t Soft} 所示．%
+%
+\begin{figure}[!htb]
+  \centering
+  \scalebox{0.45}{\input{./figures/structure_of_soft_attention}}
+  \caption{$t$ 时刻上下文向量 $\vec{c}_t$ 的计算过程 (Soft Attention)}
+  \label{fig:Calculation of Context Vector at t Soft}
+\end{figure}%
+%
+由\cref{fig:Calculation of Context Vector at t Soft} 可以看出 $t$ 时刻的上下文向量 $\vec{c}_t$ 的计算需要 $t-1$ 时刻 Decoder 的输出 $\vec{s}_{t-1}$ 以及所有 Encoder 的输出 $\vec{h} = (\vec{h}_1, \vec{h}_2, \cdots, \vec{h}_{\ell(i)})$．
+
+计算上下文向量的第一步是计算向量 $\vec{e}_t = (e_{t, 1}, e_{t, 2}, \cdots, e_{t, \ell(i)})$，其中第 $j$ 个元素 $e_{t, j}$ 的计算公式如\cref{eqn:Calculation of Element of Vector e} 所示．%
+%
+\begin{equation}\label{eqn:Calculation of Element of Vector e}
+  e_{t, j} = \vec{v}_e^\top\tanh\big(\bm{W}_e[\vec{s}_{t-1};\vec{h}_j] + \vec{b}_e\big)\text{．}
+\end{equation}%
+%
+其中，$\bm{W}_e$ 是权重矩阵，且满足 $\bm{W}_e\in\mathbb{R}^{\ell(i)\times[\ell(s)+\ell(c)]}$；$\vec{b}_e$ 是偏置向量，且满足 $\vec{b}_e\in\mathbb{R}^{\ell(i)\times 1}$；$\vec{v}_e$ 是权重向量，且满足 $\vec{v}_e\in\mathbb{R}^{\ell(i)\times 1}$．权重矩阵 $\bm{W}_e$ 和权重向量 $\vec{v}_e$ 由训练获得，有文献 \cite{Luong-2015-p-} 指出向量 $\vec{b}_e = \vec{0}$，可以不必训练．
+
+计算上下文向量的第二步是计算向量 $\vec{a}_t = (a_{t, 1}, a_{t, 2}, \cdots, a_{t, \ell(i)})$，计算公式如\cref{eqn:Calculation of Element of Vector a} 所示．%
+%
+\begin{equation}\label{eqn:Calculation of Element of Vector a}
+  a_{t, j} = \frac{\exp(e_{t, j})}{\sum_{j = 1}^{\ell(i)}\exp(e_{t, j})}\text{．}
+\end{equation}%
+%
+值得注意的是，\cref{eqn:Calculation of Element of Vector a} 是 Softmax 函数．其实直接将向量 $\vec{e}_j$ 进行归一化也可以，但是如果是这样的话，向量 $\vec{e}_j$ 中分量等于 $0$ 所对应的向量 $\vec{h}$ 将完全失去效果，Softmax 函数的引入很好的解决了这个问题．最后，根据\cref{eqn:Calculation of Context Vector c} 即可计算 $t$ 时刻的上下文向量 $\vec{c}_t$．%
+%
+\begin{equation}\label{eqn:Calculation of Context Vector c}
+  \vec{c}_t = \sum_{j = 1}^{\ell(i)}a_{t, j}\vec{h}_j\text{．}
+\end{equation}%
+
+上面介绍的是 Soft Attention 模型，对应的还有 Hard Attention 模型，其结构如\cref{fig:Calculation of Context Vector at t Hard} 所示．%
+%
+\begin{figure}[!htb]
+  \centering
+  \scalebox{0.45}{\input{./figures/structure_of_hard_attention}}
+  \caption{$t$ 时刻上下文向量 $\vec{c}_t$ 的计算过程 (Hard Attention)}
+  \label{fig:Calculation of Context Vector at t Hard}
+\end{figure}%
+%
+二者几乎一致，在计算向量 $\vec{a}_t$ 以及计算向量 $\vec{a}_t$ 之前都是一致的． Soft Attention 模型和 Hard Attention 模型唯一的区别在于如何利用向量 $\vec{a}_t$．%
+%
+\begin{itemize}
+\item 在 Soft Attention 模型中，向量 $\vec{a}_t$ 中的元素 $a_{t, j}$ 被理解成向量 $\vec{h}_j$ 的权值，上下文向量的计算公式是 向量 $\vec{h}_j$ 的加权求和．
+\item 在 Hard Attention 模型中，向量 $\vec{a}_t$ 中的元素 $a_{t, j}$ 被理解成概率，即把上下文向量 $\vec{c}_t$ 看作是随机变量，其可能的取值为 $\vec{h} = (\vec{h}_1, \vec{h}_2, \cdots, \vec{h}_{\ell(i)})$，其服从的分布为 $\vec{a}_t = (a_{t, 1}, a_{t, 2}, \cdots, a_{t, \ell(i)})$，Hard Attention 模型在计算上下文向量要做的是以概率分布 $\vec{a}_t = (a_{t, 1}, a_{t, 2}, \cdots, a_{t, \ell(i)})$ 从 $\vec{h} = (\vec{h}_1, \vec{h}_2, \cdots, \vec{h}_{\ell(i)})$ 选出一个作为上下文向量．
+\end{itemize}
+
+\subsection{小节}
+\indent\ss{} 是 \lstm{} 一个效果非常好的典型应用，通过引入 Encoder 将任意长的文本压缩到固定长度的上下文向量，然后利用 Decoder 对齐解码，实现非常好的序列映射关系建模．后来的 Attention 机制的引入，弥补了 \ss{} 中固定长度的上下文向量无法包含任意长度文本信息的问题．

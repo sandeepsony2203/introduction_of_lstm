@@ -1,0 +1,53 @@
+\begin{tikzpicture}
+  \decodernode[position = {(0, 0)}, prefix = decoder1]{};
+  \decodernode[position = {(6.5, 0)}, prefix = decoder2]{};
+  \decodernode[position = {(14.5, 0)}, prefix = decoder3]{};
+
+  \node[fit = (decoder1-frame.north west) (decoder1-frame.south east), cover] {};
+  \node[fit = (decoder3-frame.north west) (decoder3-frame.south east), cover] {};
+  \drawdecoderborder[prefix = decoder1]{};
+  \drawdecoderborder[prefix = decoder3]{};
+
+  \node[scale = 6] at (decoder1-frame.center) {\shadowtext{$D_0$}};
+  \node[scale = 6] at (decoder3-frame.center) {\shadowtext{$D_{\smash{\ell(o)}}$}};
+
+  \node (cdots1) at ($(decoder2-mt)!0.5!(decoder3-mt-1)$) {$\cdots$};
+  \node (cdots2) at ($(decoder2-ht)!0.5!(decoder3-ht-1)$) {$\cdots$};
+
+  \draw[flow, -] (decoder1-mt-1) -- ++(180:1cm)   node[midway, above] {\shadowtext{$\vec{n}_{0}$}};
+  \draw[flow, -] (decoder1-ht-1) -- ++(180:1cm)   node[midway, above] {\shadowtext{$\vec{s}_{0}$}};
+  \draw[flow, -] (decoder1-mt) -- (decoder2-mt-1) node[midway, above] {\shadowtext{$\vec{n}_{1}$}};
+  \draw[flow, -] (decoder1-ht) -- (decoder2-ht-1) node[midway, above] {\shadowtext{$\vec{s}_{1}$}};
+  \draw[flow]    (decoder2-mt) -- (cdots1)        node[midway, above] {\shadowtext{$\vec{n}_{2}$}};
+  \draw[flow]    (decoder2-ht) -- (cdots2)        node[midway, above] {\shadowtext{$\vec{s}_{2}$}};
+  \draw[flow, -] (cdots1) -- (decoder3-mt-1)      node[midway, above] {\shadowtext{$\vec{n}_{\smash{\ell(o)}}$}};
+  \draw[flow, -] (cdots2) -- (decoder3-ht-1)      node[midway, above] {\shadowtext{$\vec{s}_{\smash{\ell(o)}}$}};
+  \draw[flow]    (decoder3-mt) -- ++(0:1.5cm)     node[midway, above] {\shadowtext{$\vec{n}_{\smash{\ell(o) + 1}}$}};
+  \draw[flow]    (decoder3-ht) -- ++(0:1.5cm)     node[midway, above] {\shadowtext{$\vec{s}_{\smash{\ell(o) + 1}}$}};
+
+  \coordinate (m1) at ([xshift = 0.5cm]decoder1-mt);
+  \coordinate (h1) at ([xshift = 0.5cm]decoder1-ht);
+  \coordinate (m2) at ([xshift = 0.5cm]decoder2-mt);
+  \coordinate (h2) at ([xshift = 0.5cm]decoder2-ht);
+  \coordinate (mo) at ([xshift = -0.5cm]decoder3-mt-1);
+  \coordinate (ho) at ([xshift = -0.5cm]decoder3-ht-1);
+
+  \foreach \h/\x [count = \i] in {\texttt{SOS}/$\vec{y}_1$, $\vec{y}'_1$/$\vec{y}_2$, $\vec{y}'_{\ell(o)}$/\texttt{EOS}}{%
+    \draw[flow, black] (decoder\i-yt) -- ++(90:0.5cm) node[output, anchor = south, text = black] (y\i) {\x};
+    \draw[flow, black, -] (decoder\i-yt-1) -- ++ (-90:0.5cm) node[input, anchor = north, text = black] (y\i-1) {\h};
+    \draw[flow, -] (decoder\i-ct) -- ++(-90:0.5cm) node[input, anchor = north] () {$\vec{c}$};
+  }
+
+  \node[text = black] (cdots0) at (y1 -| cdots1) {$\cdots$};
+  \node[text = black] (cdots3) at (y1-1 -| cdots1) {$\cdots$};
+
+  \node[rectangle operator, fill = black] (E1) at ($(m1)!0.5!(h1)$) {$\varepsilon$};
+  \node[rectangle operator, fill = black] (E2) at ($(m2)!0.5!(h2)$) {$\varepsilon$};
+  \node[rectangle operator, fill = black] (E3) at ($(mo)!0.5!(ho)$) {$\varepsilon$};
+
+  \begin{scope}[on background layer]
+    \draw[flow, black] (y1)     -| ([yshift = 3.00pt]m1) ([yshift = -3.00pt]m1) -- (E1); \draw[flow] (E1) -- ([yshift = 3.00pt]h1) ([yshift = -3.00pt]h1) |- (y2-1);
+    \draw[flow, black] (y2)     -| ([yshift = 3.00pt]m2) ([yshift = -3.00pt]m2) -- (E2); \draw[flow] (E2) -- ([yshift = 3.00pt]h2) ([yshift = -3.00pt]h2) |- (cdots3);
+    \draw[flow, black] (cdots0) -| ([yshift = 3.00pt]mo) ([yshift = -3.00pt]mo) -- (E3); \draw[flow] (E3) -- ([yshift = 3.00pt]ho) ([yshift = -3.00pt]ho) |- (y3-1);
+  \end{scope}
+\end{tikzpicture}

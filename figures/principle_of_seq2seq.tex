@@ -1,0 +1,22 @@
+\begin{tikzpicture}
+  \foreach [count = \i] \p/\x in {0/E_1, 3/E_2, 6/E_3, 10/D_0, 13/D_1, 16/D_2, 19/D_3}{%
+    \node[frame, minimum height = 1.5cm, minimum width = 2cm] (A\i) at (\p cm, 0) {};
+    \node[scale = 2] at (A\i) {\shadowtext{$\x$}};
+  }
+
+  \node (Ac) at ($(A3)!0.5!(A4)$) {$\vec{c}$};
+
+  \foreach [count = \i] \x in {A, B, C, SOS, X, Y, Z}{%
+    \node[input, anchor = north] (i\i) at ([yshift = -1cm]A\i.south) {\texttt{\x}};
+    \draw[flow] (i\i) -- (A\i);
+  }
+
+  \foreach [count = \i from 4] \x in {X, Y, Z, EOS}{%
+    \node[output, anchor = south] (o\i) at ([yshift = 1cm]A\i.north) {\texttt{\x}};
+    \draw[flow] (A\i) -- (o\i);
+  }
+
+  \foreach \y/\x in {1/2, 2/3, 3/c, c/4, 4/5, 5/6, 6/7}{%
+    \draw[flow] (A\y) -- (A\x);
+  }
+\end{tikzpicture}
